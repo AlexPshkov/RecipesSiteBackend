@@ -13,6 +13,7 @@ public static class UserEntityExtensions
         {
             id = userEntity.Id.ToString(),
             userName = userEntity.UserName,
+            password = userEntity.Password,
             description = userEntity.Description,
             login = userEntity.Login,
             role = userEntity.Role.ToString()
