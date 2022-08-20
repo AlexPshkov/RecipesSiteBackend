@@ -10,12 +10,4 @@ public class TagEntity : AbstractEntity
     [Required] 
     [MaxLength(500)]
     public string Name { get; set; }
-    
-    [Required] 
-    [MaxLength(500)]
-    public string IconUrl { get; set; }
-    
-    [Required] 
-    [MaxLength(1000)]
-    public string Description { get; set; }
 }

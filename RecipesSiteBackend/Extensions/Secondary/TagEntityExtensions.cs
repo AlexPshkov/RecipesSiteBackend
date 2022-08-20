@@ -1,7 +1,7 @@
-﻿using RecipesSiteBackend.Dto;
+﻿using RecipesSiteBackend.Dto.Secondary;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 
-namespace RecipesSiteBackend.Extensions;
+namespace RecipesSiteBackend.Extensions.Secondary;
 
 public static class TagEntityExtensions
 {
@@ -13,8 +13,6 @@ public static class TagEntityExtensions
         {
             id = tagEntity.Id,
             tagName = tagEntity.Name,
-            tagDescription = tagEntity.Description,
-            tagIconURL = tagEntity.IconUrl
         };
     } 
 }

@@ -14,7 +14,7 @@ public static class RegisterRequestExtensions
             Id = Guid.NewGuid(),
             UserName = request.name,
             Description = "",
-            Login = request.login,
+            Login = request.login.ToLower(),
             Password = request.password
         };
     }

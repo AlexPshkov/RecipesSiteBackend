@@ -1,6 +1,6 @@
 ﻿using RecipesSiteBackend.Dto;
+using RecipesSiteBackend.Extensions.Secondary;
 using RecipesSiteBackend.Storage.Entities.Implementation;
-using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 
 namespace RecipesSiteBackend.Extensions;
 
@@ -13,15 +13,15 @@ public static class RecipeEntityExtensions
         return new RecipeDto()
         {
             id = recipeEntity.Id,
-            authorName = recipeEntity.Author.UserName,
             recipeName = recipeEntity.RecipeName,
             recipeDescription = recipeEntity.RecipeDescription,
             imageURL = recipeEntity.ImageUrl,
             requiredTime = recipeEntity.RequiredTime,
             servingsAmount = recipeEntity.ServingsAmount,
-            favoritesAmount = recipeEntity.Favorites.Count.ToString(),
-            likesAmount = recipeEntity.Likes.Count.ToString(),
-            currentTags = recipeEntity.Tags.ConvertAll( input => input.ConvertToTagDto())
+            author = recipeEntity.Author.ConvertToUserDto(),
+            favorites = recipeEntity.Favorites.ConvertAll( input => input.ConvertToFavoriteDto()),
+            likes = recipeEntity.Likes.ConvertAll( input => input.ConvertToLikeDto()),
+            tags = recipeEntity.Tags.ConvertAll( input => input.ConvertToTagDto())
         };
     } 
 }

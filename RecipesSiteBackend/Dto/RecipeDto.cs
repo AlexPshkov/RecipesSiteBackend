@@ -1,4 +1,6 @@
-﻿namespace RecipesSiteBackend.Dto;
+﻿using RecipesSiteBackend.Dto.Secondary;
+
+namespace RecipesSiteBackend.Dto;
 
 public class RecipeDto
 {
@@ -7,12 +9,11 @@ public class RecipeDto
     public string recipeDescription { get; set; }
 
     public string imageURL { get; set; }
-    public string authorName { get; set; }
-
     public string requiredTime { get; set; }
     public string servingsAmount { get; set; }
 
-    public string favoritesAmount { get; set; }
-    public string likesAmount { get; set; }
-    public List<TagDto> currentTags { get; set; }
+    public UserDto author { get; set; }
+    public List<FavoriteDto> favorites { get; set; }
+    public List<LikeDto> likes { get; set; }
+    public List<TagDto> tags { get; set; }
 }
