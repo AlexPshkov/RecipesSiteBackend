@@ -22,8 +22,6 @@ builder.Services.AddDbContext<DataBaseContext>( c =>
 } );
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
-builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IStepRepository, StepRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();

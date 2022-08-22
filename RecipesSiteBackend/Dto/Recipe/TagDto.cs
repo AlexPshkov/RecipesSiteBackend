@@ -1,4 +1,4 @@
-﻿namespace RecipesSiteBackend.Dto.Secondary;
+﻿namespace RecipesSiteBackend.Dto.Recipe;
 
 public class TagDto
 {

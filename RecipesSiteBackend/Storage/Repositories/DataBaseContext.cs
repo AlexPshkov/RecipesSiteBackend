@@ -25,7 +25,7 @@ public class DataBaseContext : DbContext
     {
         builder.Entity<RecipeEntity>( e =>
         {
-            e.Navigation(p => p.Author).AutoInclude();
+            e.Navigation(p => p.User).AutoInclude();
             e.Navigation(p => p.Tags).AutoInclude();
             e.Navigation(p => p.Favorites).AutoInclude();
             e.Navigation(p => p.Likes).AutoInclude();

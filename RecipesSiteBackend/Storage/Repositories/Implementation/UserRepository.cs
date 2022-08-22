@@ -20,7 +20,7 @@ public class UserRepository : IUserRepository
 
     public UserEntity ? GetById( Guid id )
     {
-        return _dbContext.UserAccounts.SingleOrDefault(user => id.Equals( user.Id ));
+        return _dbContext.UserAccounts.SingleOrDefault(user => id.Equals( user.UserId ));
     }
 
     public UserEntity ?  GetByLogin( string login )

@@ -5,7 +5,7 @@ namespace RecipesSiteBackend.Storage.Entities.Implementation;
 public class UserEntity : AbstractEntity
 {
     [Key]
-    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     
     [Required]
     [MaxLength(250)]

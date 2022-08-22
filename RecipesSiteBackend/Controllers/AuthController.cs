@@ -1,12 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RecipesSiteBackend.Auth;
 using RecipesSiteBackend.Dto;
-using RecipesSiteBackend.Extensions;
+using RecipesSiteBackend.Extensions.Requests;
 using RecipesSiteBackend.Requests;
 using RecipesSiteBackend.Services;
 using RecipesSiteBackend.Storage.Entities.Implementation;
@@ -63,7 +62,7 @@ public class AuthController : ControllerBase
         var claims = new List<Claim>
         {
             new( JwtRegisteredClaimNames.Name, userEntity.Login ),
-            new( JwtRegisteredClaimNames.Sub, userEntity.Id.ToString() ),
+            new( JwtRegisteredClaimNames.Sub, userEntity.UserId.ToString() ),
             new ( "role", userEntity.Role.ToString())
         };
 
