@@ -1,7 +1,7 @@
 ﻿using RecipesSiteBackend.Dto;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 
-namespace RecipesSiteBackend.Extensions;
+namespace RecipesSiteBackend.Extensions.Entity;
 
 public static class UserEntityExtensions
 {
@@ -11,7 +11,7 @@ public static class UserEntityExtensions
         if ( userEntity == null ) return new UserDto();
         return new UserDto()
         {
-            id = userEntity.Id.ToString(),
+            id = userEntity.UserId.ToString(),
             userName = userEntity.UserName,
             password = userEntity.Password,
             description = userEntity.Description,

@@ -20,29 +20,40 @@ public class RecipeRepository : IRecipeRepository
 
     public RecipeEntity ? GetById( int id )
     {
-        return _dbContext.Recipes.SingleOrDefault(recipe => id.Equals( recipe.Id ));
+        return _dbContext.Recipes.SingleOrDefault(recipe => id.Equals( recipe.RecipeId ));
     }
 
     public List<RecipeEntity> GetUserRecipes( Guid userId )
     {
-        return _dbContext.Recipes.Where( recipe => recipe.Author.Id.Equals( userId ) ).ToList();
+        return _dbContext.Recipes.Where( recipe => recipe.UserId.Equals( userId ) ).ToList();
     }
 
+    public List<RecipeEntity> GetUserFavorites( Guid userId )
+    {
+        var favorites = _dbContext.Favorites.Where( favorite => favorite.UserId.Equals( userId ) ).ToList();
+        return favorites.ConvertAll( input => input.Recipe );
+    }
+    
     public void Create( RecipeEntity entity )
     {
         _dbContext.Recipes.Add( entity );
-        _dbContext.SaveChanges();
+        Save();
     }
 
     public void Update( RecipeEntity entity )
     {
         _dbContext.Recipes.Update( entity );
-        _dbContext.SaveChanges();
+        Save();
     }
 
     public void Delete( RecipeEntity entity )
     {
         _dbContext.Recipes.Remove( entity );
+        Save();
+    }
+    
+    public void Save( )
+    {
         _dbContext.SaveChanges();
     }
 }

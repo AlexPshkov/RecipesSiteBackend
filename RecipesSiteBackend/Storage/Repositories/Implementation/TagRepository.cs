@@ -20,7 +20,7 @@ public class TagRepository : ITagRepository
 
     public TagEntity ? GetById( int id )
     {
-        return _dbContext.Tags.SingleOrDefault(tag => id.Equals( tag.Id ));
+        return _dbContext.Tags.SingleOrDefault(tag => id.Equals( tag.TagId ));
     }
 
     public TagEntity ? GetByName( string name )

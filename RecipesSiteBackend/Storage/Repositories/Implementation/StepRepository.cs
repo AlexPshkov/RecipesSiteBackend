@@ -20,7 +20,7 @@ public class StepRepository : IStepRepository
 
     public StepEntity ? GetById( int id )
     {
-        return _dbContext.Steps.SingleOrDefault(step => id.Equals( step.Id ));
+        return _dbContext.Steps.SingleOrDefault(step => id.Equals( step.StepId ));
     }
     
     public void Create( StepEntity entity )

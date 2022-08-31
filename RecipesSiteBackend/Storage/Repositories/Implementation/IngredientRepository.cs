@@ -20,7 +20,7 @@ public class IngredientRepository : IIngredientRepository
 
     public IngredientEntity ? GetById( int id )
     {
-        return _dbContext.Ingredients.SingleOrDefault(ing => id.Equals( ing.Id ));
+        return _dbContext.Ingredients.SingleOrDefault(ing => id.Equals( ing.IngredientId ));
     }
     
     public void Create( IngredientEntity entity )

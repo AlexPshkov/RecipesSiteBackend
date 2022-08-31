@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecipesSiteBackend.Extensions;
+using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
@@ -27,7 +27,6 @@ public class UserController : Controller
     {
         _logger.LogInformation( "Get some user object request" );
         var userEntity = _userService.GetUserByLogin( userLogin );
-        if ( userEntity == null ) return NotFound();
         return Ok(userEntity.ConvertToUserDto());
     }
     
@@ -37,7 +36,6 @@ public class UserController : Controller
     {
         _logger.LogInformation( "Get own user object request" );
         var userEntity = _userService.GetUserById( UserId );
-        if ( userEntity == null ) return NotFound();
         return Ok(userEntity.ConvertToUserDto());
     }
 }
