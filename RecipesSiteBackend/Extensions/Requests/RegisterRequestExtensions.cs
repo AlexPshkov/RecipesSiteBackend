@@ -8,7 +8,7 @@ public static class RegisterRequestExtensions
     
     public static UserEntity ConvertToUserEntity( this RegisterRequest request )
     {
-        return new UserEntity()
+        return new UserEntity
         {
             UserId = Guid.NewGuid(),
             UserName = request.name,

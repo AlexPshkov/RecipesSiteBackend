@@ -2,7 +2,7 @@
 
 public class LikeDto
 {
-    public int id { get; set; }
-    public int recipeId { get; set; }
-    public string userId { get; set; }
+    public int Id { get; set; }
+    public int RecipeId { get; set; }
+    public string UserId { get; set; }
 }

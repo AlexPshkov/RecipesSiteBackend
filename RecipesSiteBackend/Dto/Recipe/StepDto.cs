@@ -2,7 +2,7 @@
 
 public class StepDto
 {
-    public int id { get; set; }
-    public int recipeId { get; set; }
-    public string description { get; set; }
+    public int Id { get; set; }
+    public int RecipeId { get; set; }
+    public string Description { get; set; }
 }
