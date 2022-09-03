@@ -10,9 +10,9 @@ public class RecipeDto
     public string RequiredTime { get; set; }
     public string ServingsAmount { get; set; }
 
-    public UserDto User { get; set; }
-    public List<FavoriteDto> Favorites { get; set; }
-    public List<LikeDto> Likes { get; set; }
+    public string UserLogin { get; set; }
+    public int FavoritesAmount { get; set; }
+    public int LikesAmount { get; set; }
     public List<TagDto> Tags { get; set; }
     public List<IngredientDto> Ingredients { get; set; }
     public List<StepDto> Steps { get; set; }

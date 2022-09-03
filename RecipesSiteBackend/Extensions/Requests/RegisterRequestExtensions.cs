@@ -11,10 +11,10 @@ public static class RegisterRequestExtensions
         return new UserEntity
         {
             UserId = Guid.NewGuid(),
-            UserName = request.name,
+            UserName = request.Name,
             Description = "",
-            Login = request.login.ToLower(),
-            Password = request.password
+            Login = request.Login.ToLower(),
+            Password = request.Password
         };
     }
 }

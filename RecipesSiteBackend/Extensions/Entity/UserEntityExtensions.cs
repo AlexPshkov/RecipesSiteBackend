@@ -8,7 +8,10 @@ public static class UserEntityExtensions
     
     public static UserDto ConvertToUserDto( this UserEntity ?  userEntity )
     {
-        if ( userEntity == null ) return new UserDto();
+        if ( userEntity == null )
+        {
+            return new UserDto();
+        }
         return new UserDto()
         {
             Id = userEntity.UserId.ToString(),

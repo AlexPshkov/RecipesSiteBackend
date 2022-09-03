@@ -31,18 +31,15 @@ public class TagRepository : ITagRepository
     public void Create( TagEntity entity )
     {
         _dbContext.Tags.Add( entity );
-        _dbContext.SaveChanges();
     }
 
     public void Update( TagEntity entity )
     {
         _dbContext.Tags.Update( entity );
-        _dbContext.SaveChanges();
     }
 
     public void Delete( TagEntity entity )
     {
         _dbContext.Tags.Remove( entity );
-        _dbContext.SaveChanges();
     }
 }

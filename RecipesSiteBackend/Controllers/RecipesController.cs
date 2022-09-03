@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecipesSiteBackend.Extensions.Entity;
-using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
-using RecipesSiteBackend.Storage.Repositories.Interfaces;
+using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
 
@@ -14,65 +13,50 @@ public class RecipesController : Controller
     private Guid UserId => Guid.Parse( User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value );
 
     private readonly ILogger<RecipesController> _logger;
-    private readonly IRecipeRepository _repository;
+    private readonly IRecipeService _recipeService;
 
-    public RecipesController(IRecipeRepository repository,  ILogger<RecipesController> logger)
+    public RecipesController(IRecipeService recipeService, ILogger<RecipesController> logger)
     {
         _logger = logger;
-        _repository = repository;
+        _recipeService = recipeService;
     }
     
     [HttpGet]
     public IActionResult GetAll()
     {
-        _logger.LogInformation( "Get all recipes request" );
-        return Ok(_repository.GetAll().ConvertAll( input => input.ConvertToRecipeDto() ));
+        _logger.LogDebug( "Get all recipes request" );
+        return Ok(_recipeService.GetAllRecipes());
     }
     
     [Route("{recipeId:int}")]
     [HttpGet]
     public IActionResult Get(int recipeId)
     {
-        _logger.LogInformation( "Get current recipe with {Id}", recipeId );
-        return Ok(_repository.GetById( recipeId ).ConvertToRecipeDto());
+        _logger.LogDebug( "Get current recipe with {Id}", recipeId );
+        try
+        {
+            return Ok( _recipeService.GetRecipe( recipeId ) );
+        }
+        catch ( NoSuchRecipeException exception )
+        {
+            return NotFound( exception.Message );
+        }
     }
-    
-    [Route("favorites")]
-    [Authorize]
-    [HttpGet]
-    public IActionResult GetFavorites()
-    {
-        _logger.LogInformation( "Get favorites recipes request" );
-        return Ok(_repository.GetUserFavorites( UserId ).ConvertAll( input => input.ConvertToRecipeDto() ));
-    }
-    
+
     [Route("like/{recipeId:int}")]
     [Authorize]
     [HttpPut]
     public IActionResult Like(int recipeId)
     {
-        _logger.LogInformation( "Like request received" );
-
-        
-        var recipe = _repository.GetById( recipeId );
-        if ( recipe == null ) return Conflict();
-        
-        var userId = UserId;
-        var domainLike = recipe.Likes.Find( input => input.UserId.Equals( userId ) );
-
-
-        var likeEntity = new LikeEntity()
+        _logger.LogDebug( "Like request received" );
+        try
         {
-            LikeId = domainLike?.LikeId ?? 0,
-            Recipe = recipe,
-            UserId = userId
-        };
-
-        if ( domainLike != null ) recipe.Likes.Remove( domainLike );
-        else recipe.Likes.Add(likeEntity );
-        _repository.Save();
-        
-        return Ok( recipe.ConvertToRecipeDto() );
+            return Ok( _recipeService.HandleLike( recipeId, UserId ) );
+        }
+        catch ( NoSuchRecipeException exception )
+        {
+            return NotFound(exception.Message);
+        }
     }
     
     [Route("favorite/{recipeId:int}")]
@@ -80,28 +64,15 @@ public class RecipesController : Controller
     [HttpPut]
     public IActionResult Favorite(int recipeId)
     {
-        _logger.LogInformation( "Favorite request received" );
-
-        
-        var recipe = _repository.GetById( recipeId );
-        if ( recipe == null ) return Conflict();
-        
-        var userId = UserId;
-        var domainFavorite = recipe.Favorites.Find( input => input.UserId.Equals( userId ) );
-
-
-        var favoriteEntity = new FavoriteEntity()
+        _logger.LogDebug( "Favorite request received" );
+        try
         {
-            FavoriteId = domainFavorite?.FavoriteId ?? 0,
-            Recipe = recipe,
-            UserId = userId
-        };
-
-        if ( domainFavorite != null ) recipe.Favorites.Remove( domainFavorite );
-        else recipe.Favorites.Add(favoriteEntity );
-        _repository.Save();
-        
-        return Ok( recipe.ConvertToRecipeDto() );
+            return Ok( _recipeService.HandleFavorite( recipeId, UserId ) );
+        }
+        catch ( NoSuchRecipeException exception )
+        {
+            return NotFound(exception.Message);
+        }
     }
     
 }

@@ -6,11 +6,11 @@ public class RegisterRequest
 {
 
     [Required]
-    public string name { get; set; }
+    public string Name { get; set; }
     
     [Required]
-    public string login { get; set; }
+    public string Login { get; set; }
     
     [Required]
-    public string password { get; set; }
+    public string Password { get; set; }
 }

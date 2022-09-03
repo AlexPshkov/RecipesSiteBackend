@@ -25,7 +25,7 @@ public class UserController : Controller
     [HttpGet]
     public IActionResult GetUser(string userLogin)
     {
-        _logger.LogInformation( "Get some user object request" );
+        _logger.LogDebug( "Get some user object request" );
         var userEntity = _userService.GetUserByLogin( userLogin );
         return Ok(userEntity.ConvertToUserDto());
     }
@@ -34,8 +34,18 @@ public class UserController : Controller
     [Authorize]
     public IActionResult GetUser()
     {
-        _logger.LogInformation( "Get own user object request" );
+        _logger.LogDebug( "Get own user object request" );
         var userEntity = _userService.GetUserById( UserId );
         return Ok(userEntity.ConvertToUserDto());
     }
+    
+    [HttpGet]
+    [Authorize]
+    [Route("favorites")]
+    public IActionResult GetFavorites()
+    {
+        _logger.LogDebug( "Get favorites recipes request" );
+        return Ok(_userService.GetFavorites( UserId ));
+    }
+    
 }

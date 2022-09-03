@@ -7,7 +7,7 @@ public static class UserDtoExtensions
 {
     public static UserEntity ConvertToUserEntity( this UserDto dto )
     {
-        return new UserEntity()
+        return new UserEntity
         {
             UserId = Guid.Parse(dto.Id),
             UserName = dto.UserName,
