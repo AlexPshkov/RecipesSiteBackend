@@ -45,7 +45,7 @@ public class UserController : Controller
     public IActionResult GetFavorites()
     {
         _logger.LogDebug( "Get favorites recipes request" );
-        return Ok(_userService.GetFavorites( UserId ));
+        return Ok(_userService.GetFavorites( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
     }
     
 }

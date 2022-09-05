@@ -1,6 +1,4 @@
-﻿using RecipesSiteBackend.Dto.Recipe;
-using RecipesSiteBackend.Extensions.Entity;
-using RecipesSiteBackend.Storage.Entities.Implementation;
+﻿using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
 
@@ -27,19 +25,19 @@ public class UserService : IUserService
         return _userRepository.GetByLogin( login );
     }
     
-    public List<RecipeDto> GetFavorites( Guid userId )
+    public List<RecipeEntity> GetFavorites( Guid userId )
     {
-        return _userRepository.GetFavorites( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+        return _userRepository.GetFavorites( userId );
     }
     
-    public List<RecipeDto> GetLikes( Guid userId )
+    public List<RecipeEntity> GetLikes( Guid userId )
     {
-        return _userRepository.GetLikes( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+        return _userRepository.GetLikes( userId );
     }
     
-    public List<RecipeDto> GetCreatedRecipes( Guid userId )
+    public List<RecipeEntity> GetCreatedRecipes( Guid userId )
     {
-        return _userRepository.GetCreatedRecipes( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+        return _userRepository.GetCreatedRecipes( userId );
     }
     
     public void Save( UserEntity userEntity )

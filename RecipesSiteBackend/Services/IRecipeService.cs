@@ -1,24 +1,24 @@
-﻿using RecipesSiteBackend.Dto.Recipe;
-using RecipesSiteBackend.Exceptions;
+﻿using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Storage.Entities.Implementation;
 
 namespace RecipesSiteBackend.Services;
 
 public interface IRecipeService
 {
-    public List<RecipeDto> GetAllRecipes();
+    public List<RecipeEntity> GetAllRecipes();
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeDto GetRecipe( int recipeId );
+    public RecipeEntity GetRecipe( int recipeId );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeDto HandleLike( int recipeId, Guid userId );
+    public RecipeEntity HandleLike( int recipeId, Guid userId );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeDto HandleFavorite( int recipeId, Guid userId );
+    public RecipeEntity HandleFavorite( int recipeId, Guid userId );
 }

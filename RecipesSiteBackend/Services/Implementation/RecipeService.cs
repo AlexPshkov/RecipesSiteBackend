@@ -1,6 +1,5 @@
-﻿using RecipesSiteBackend.Dto.Recipe;
-using RecipesSiteBackend.Exceptions;
-using RecipesSiteBackend.Extensions.Entity;
+﻿using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
@@ -12,30 +11,29 @@ public class RecipeService : IRecipeService
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRecipeRepository _repository;
-
-    public RecipeService(IUnitOfWork unitOfWork, IRecipeRepository repository)
+    
+    public RecipeService( IUnitOfWork unitOfWork, IRecipeRepository repository )
     {
         _unitOfWork = unitOfWork;
         _repository = repository;
     }
-
-
-    public List<RecipeDto> GetAllRecipes()
+    
+    public List<RecipeEntity> GetAllRecipes()
     {
-        return _repository.GetAll().ConvertAll( input => input.ConvertToRecipeDto() );
+        return _repository.GetAll();
     }
 
-    public RecipeDto GetRecipe( int recipeId)
+    public RecipeEntity GetRecipe( int recipeId)
     {
         var recipe = _repository.GetById( recipeId );
         if ( recipe == null )
         {
             throw new NoSuchRecipeException( recipeId );
         }
-        return recipe.ConvertToRecipeDto();
+        return recipe;
     }
     
-    public RecipeDto HandleLike( int recipeId, Guid userId )
+    public RecipeEntity HandleLike( int recipeId, Guid userId )
     {
         var recipe = _repository.GetById( recipeId );
         if ( recipe == null )
@@ -61,10 +59,10 @@ public class RecipeService : IRecipeService
             recipe.Likes.Add(likeEntity );
         }
         _unitOfWork.SaveChanges();
-        return recipe.ConvertToRecipeDto();
+        return recipe;
     }
     
-    public RecipeDto HandleFavorite( int recipeId, Guid userId )
+    public RecipeEntity HandleFavorite( int recipeId, Guid userId )
     {
         var recipe = _repository.GetById( recipeId );
         if ( recipe == null )
@@ -90,6 +88,6 @@ public class RecipeService : IRecipeService
             recipe.Favorites.Add(favoriteEntity );
         }
         _unitOfWork.SaveChanges();
-        return recipe.ConvertToRecipeDto();
+        return recipe;
     }
 }

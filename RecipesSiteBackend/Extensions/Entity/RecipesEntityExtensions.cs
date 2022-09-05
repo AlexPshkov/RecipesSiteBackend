@@ -6,8 +6,7 @@ namespace RecipesSiteBackend.Extensions.Entity;
 
 public static class RecipesEntityExtensions
 {
-    
-    public static RecipeDto ConvertToRecipeDto( this RecipeEntity?  recipeEntity )
+    public static RecipeDto ConvertToRecipeDto( this RecipeEntity?  recipeEntity, Guid? userId = null )
     {
         if ( recipeEntity == null )
         {
@@ -24,6 +23,8 @@ public static class RecipesEntityExtensions
             UserLogin = recipeEntity.User.Login,
             FavoritesAmount = recipeEntity.Favorites.Count,
             LikesAmount = recipeEntity.Likes.Count,
+            IsLiked = userId != null && recipeEntity.Likes.Exists( x => x.UserId == userId ),
+            IsFavorite = userId != null && recipeEntity.Favorites.Exists( x => x.UserId == userId ),
             Tags = recipeEntity.Tags.ConvertAll( input => input.ConvertToTagDto()),
             Ingredients = recipeEntity.Ingredients.ConvertAll( input => input.ConvertToIngredientDto() ),
             Steps = recipeEntity.Steps.ConvertAll( input => input.ConvertToStepDto() ),

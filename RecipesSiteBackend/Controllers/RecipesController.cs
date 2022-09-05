@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
@@ -10,8 +11,20 @@ namespace RecipesSiteBackend.Controllers;
 [Route( "api/[controller]" )]
 public class RecipesController : Controller
 {
-    private Guid UserId => Guid.Parse( User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value );
-
+    private Guid? UserId
+    {
+        get
+        {
+            var isAuthed = User.Claims.Any( x => x.Type == ClaimTypes.NameIdentifier );
+            if ( isAuthed )
+            {
+                return Guid.Parse( User.Claims.Single( c => c.Type == ClaimTypes.NameIdentifier ).Value );
+            }
+            return null;
+        }
+    }
+    
+    
     private readonly ILogger<RecipesController> _logger;
     private readonly IRecipeService _recipeService;
 
@@ -25,7 +38,7 @@ public class RecipesController : Controller
     public IActionResult GetAll()
     {
         _logger.LogDebug( "Get all recipes request" );
-        return Ok(_recipeService.GetAllRecipes());
+        return Ok(_recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
     }
     
     [Route("{recipeId:int}")]
@@ -35,7 +48,7 @@ public class RecipesController : Controller
         _logger.LogDebug( "Get current recipe with {Id}", recipeId );
         try
         {
-            return Ok( _recipeService.GetRecipe( recipeId ) );
+            return Ok( _recipeService.GetRecipe( recipeId ).ConvertToRecipeDto( UserId ) );
         }
         catch ( NoSuchRecipeException exception )
         {
@@ -51,7 +64,7 @@ public class RecipesController : Controller
         _logger.LogDebug( "Like request received" );
         try
         {
-            return Ok( _recipeService.HandleLike( recipeId, UserId ) );
+            return Ok( _recipeService.HandleLike( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
         }
         catch ( NoSuchRecipeException exception )
         {
@@ -67,7 +80,7 @@ public class RecipesController : Controller
         _logger.LogDebug( "Favorite request received" );
         try
         {
-            return Ok( _recipeService.HandleFavorite( recipeId, UserId ) );
+            return Ok( _recipeService.HandleFavorite( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
         }
         catch ( NoSuchRecipeException exception )
         {
