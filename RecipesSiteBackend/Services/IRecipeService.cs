@@ -6,6 +6,8 @@ namespace RecipesSiteBackend.Services;
 public interface IRecipeService
 {
     public List<RecipeEntity> GetAllRecipes();
+
+    public bool SaveRecipe( RecipeEntity recipeEntity );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>

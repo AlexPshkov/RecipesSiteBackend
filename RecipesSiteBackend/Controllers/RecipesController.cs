@@ -1,7 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Security.Authentication;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipesSiteBackend.Dto.Recipe;
 using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Services;
 
@@ -28,7 +31,7 @@ public class RecipesController : Controller
     private readonly ILogger<RecipesController> _logger;
     private readonly IRecipeService _recipeService;
 
-    public RecipesController(IRecipeService recipeService, ILogger<RecipesController> logger)
+    public RecipesController( IRecipeService recipeService, ILogger<RecipesController> logger )
     {
         _logger = logger;
         _recipeService = recipeService;
@@ -38,12 +41,12 @@ public class RecipesController : Controller
     public IActionResult GetAll()
     {
         _logger.LogDebug( "Get all recipes request" );
-        return Ok(_recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
+        return Ok( _recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
     }
     
     [Route("{recipeId:int}")]
     [HttpGet]
-    public IActionResult Get(int recipeId)
+    public IActionResult Get( int recipeId )
     {
         _logger.LogDebug( "Get current recipe with {Id}", recipeId );
         try
@@ -55,11 +58,21 @@ public class RecipesController : Controller
             return NotFound( exception.Message );
         }
     }
+    
+    [Route("save")]
+    [Authorize]
+    [HttpPost]
+    public IActionResult Save( RecipeDto recipeDto )
+    {
+        _logger.LogDebug( "Save new recipe" );
+        _recipeService.SaveRecipe( recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException()) );
+        return Ok();
+    }
 
     [Route("like/{recipeId:int}")]
     [Authorize]
     [HttpPut]
-    public IActionResult Like(int recipeId)
+    public IActionResult Like( int recipeId )
     {
         _logger.LogDebug( "Like request received" );
         try
@@ -75,7 +88,7 @@ public class RecipesController : Controller
     [Route("favorite/{recipeId:int}")]
     [Authorize]
     [HttpPut]
-    public IActionResult Favorite(int recipeId)
+    public IActionResult Favorite( int recipeId )
     {
         _logger.LogDebug( "Favorite request received" );
         try

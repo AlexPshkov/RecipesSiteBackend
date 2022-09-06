@@ -12,10 +12,9 @@ public class UserEntity : AbstractEntity
     
     public Role Role { get; set; }
     
-    
-    public List<RecipeEntity> CreatedRecipes { get; set; }
-    public List<LikeEntity> Likes { get; set; }
-    public List<FavoriteEntity> Favorites { get; set; }
+    public List<RecipeEntity> CreatedRecipes { get; set; } = new();
+    public List<LikeEntity> Likes { get; set; } = new();
+    public List<FavoriteEntity> Favorites { get; set; } = new();
 }
 
 

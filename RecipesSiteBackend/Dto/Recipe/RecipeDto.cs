@@ -9,8 +9,8 @@ public class RecipeDto
     public string ImagePath { get; set; }
     public string RequiredTime { get; set; }
     public string ServingsAmount { get; set; }
-
-    public string UserLogin { get; set; }
+    
+    public string UserLogin { get; set; } = "";
     public int FavoritesAmount { get; set; }
     public int LikesAmount { get; set; }
     public bool IsLiked { get; set; }

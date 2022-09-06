@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RecipesSiteBackend.Storage.Entities.Implementation;
+﻿using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 
 namespace RecipesSiteBackend.Storage.Repositories.Implementation;
@@ -26,7 +25,9 @@ public class RecipeRepository : IRecipeRepository
 
     public void Create( RecipeEntity entity )
     {
-        _dbContext.Recipes.Add( entity );
+        var userEntity = _dbContext.UserAccounts.SingleOrDefault( userEntity => userEntity.UserId == entity.UserId );
+        entity.User = userEntity!;
+        userEntity!.CreatedRecipes.Add( entity );
     }
 
     public void Update( RecipeEntity entity )

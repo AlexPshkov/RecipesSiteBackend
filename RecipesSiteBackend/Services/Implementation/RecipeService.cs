@@ -11,7 +11,7 @@ public class RecipeService : IRecipeService
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRecipeRepository _repository;
-    
+
     public RecipeService( IUnitOfWork unitOfWork, IRecipeRepository repository )
     {
         _unitOfWork = unitOfWork;
@@ -31,6 +31,13 @@ public class RecipeService : IRecipeService
             throw new NoSuchRecipeException( recipeId );
         }
         return recipe;
+    }
+    
+    public bool SaveRecipe( RecipeEntity recipeEntity )
+    {
+        _repository.Create( recipeEntity );
+        _unitOfWork.SaveChanges();
+        return true;
     }
     
     public RecipeEntity HandleLike( int recipeId, Guid userId )
