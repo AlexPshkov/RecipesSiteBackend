@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto;
+using RecipesSiteBackend.Dto.Requests;
 using RecipesSiteBackend.Extensions.Requests;
-using RecipesSiteBackend.Requests;
 using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;

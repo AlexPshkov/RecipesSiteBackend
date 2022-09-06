@@ -1,4 +1,4 @@
-﻿using RecipesSiteBackend.Requests;
+﻿using RecipesSiteBackend.Dto.Requests;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 
 namespace RecipesSiteBackend.Extensions.Requests;

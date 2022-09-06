@@ -30,6 +30,7 @@ builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var authOptions = builder.Configuration.GetSection( "Auth" ).Get<AuthOptions>();
 builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection("Auth"));
@@ -59,6 +60,8 @@ var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.UseCors(x => x
     .AllowAnyOrigin()
