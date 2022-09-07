@@ -7,7 +7,11 @@ public interface IRecipeService
 {
     public List<RecipeEntity> GetAllRecipes();
 
-    public bool SaveRecipe( RecipeEntity recipeEntity );
+    
+    /**
+     * <exception cref="InvalidRecipeException"></exception>>
+     */
+    public int SaveRecipe( RecipeEntity recipeEntity );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>

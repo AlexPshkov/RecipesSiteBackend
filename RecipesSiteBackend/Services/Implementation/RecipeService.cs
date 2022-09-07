@@ -3,6 +3,7 @@ using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
+using RecipesSiteBackend.Validators;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
@@ -33,11 +34,11 @@ public class RecipeService : IRecipeService
         return recipe;
     }
     
-    public bool SaveRecipe( RecipeEntity recipeEntity )
+    public int SaveRecipe( RecipeEntity recipeEntity )
     {
-        _repository.Create( recipeEntity );
+        _repository.Create( recipeEntity.ValidateRecipe() );
         _unitOfWork.SaveChanges();
-        return true;
+        return recipeEntity.RecipeId;
     }
     
     public RecipeEntity HandleLike( int recipeId, Guid userId )

@@ -6,11 +6,11 @@ public class NoSuchRecipeException : Exception
     {
     }
 
-    public NoSuchRecipeException(int recipeId) : base($"No such recipe with ID:{recipeId}")
+    public NoSuchRecipeException( int recipeId ) : base( $"No such recipe with ID:{recipeId}" )
     {
     }
 
-    public NoSuchRecipeException(string message, Exception inner) : base(message, inner)
+    public NoSuchRecipeException( string message, Exception inner ) : base( message, inner )
     {
     }
 }

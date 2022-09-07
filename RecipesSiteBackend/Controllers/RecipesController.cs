@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto.Recipe;
+using RecipesSiteBackend.Dto.Responses;
 using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
@@ -65,8 +66,19 @@ public class RecipesController : Controller
     public IActionResult Save( RecipeDto recipeDto )
     {
         _logger.LogDebug( "Save new recipe" );
-        _recipeService.SaveRecipe( recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException()) );
-        return Ok();
+        try
+        {
+            var createdId = _recipeService.SaveRecipe( recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() ) );
+            return Ok( new RecipeCreated
+            {
+                RecipeId = createdId
+            } );
+        }
+        catch ( InvalidRecipeException exception )
+        {
+            _logger.LogWarning( "Try to save invalid recipe" );
+            return BadRequest();
+        }
     }
 
     [Route("like/{recipeId:int}")]
