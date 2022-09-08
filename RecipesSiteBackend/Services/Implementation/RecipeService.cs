@@ -13,11 +13,13 @@ public class RecipeService : IRecipeService
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRecipeRepository _repository;
+    private readonly ITagRepository _tagRepository;
 
-    public RecipeService( IUnitOfWork unitOfWork, IRecipeRepository repository )
+    public RecipeService( IUnitOfWork unitOfWork, IRecipeRepository repository, ITagRepository tagRepository )
     {
         _unitOfWork = unitOfWork;
         _repository = repository;
+        _tagRepository = tagRepository;
     }
     
     public List<RecipeEntity> GetAllRecipes()
@@ -34,10 +36,22 @@ public class RecipeService : IRecipeService
         }
         return recipe;
     }
+
+    private List<TagEntity> GetDomainTags( List<TagEntity> tags )
+    {
+        var list = new List<TagEntity>();
+        foreach ( var tagEntity in tags )
+        {
+           list.Add( _tagRepository.GetByName( tagEntity.Name ) ?? tagEntity );
+        }
+        return list;
+    } 
     
     public int SaveRecipe( RecipeEntity newRecipeEntity )
     {
         var newValidRecipe = newRecipeEntity.ValidateRecipe();
+        newValidRecipe.Tags = GetDomainTags( newRecipeEntity.Tags );
+        
         if ( newRecipeEntity.RecipeId == 0 )
         {
             _repository.Create( newValidRecipe );

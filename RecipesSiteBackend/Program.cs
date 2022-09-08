@@ -19,7 +19,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<DataBaseContext>( c =>
 {
     var connectionString = builder.Configuration.GetValue<string>( "MySQLConnection" ) ?? throw new NoNullAllowedException("Please init MySQLConnection in conf file");
-    c.UseMySql( connectionString, ServerVersion.AutoDetect( connectionString ) );
+    c.UseMySql( connectionString, ServerVersion.AutoDetect( connectionString ),
+        o => o.UseQuerySplittingBehavior( QuerySplittingBehavior.SplitQuery ) );
 } );
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

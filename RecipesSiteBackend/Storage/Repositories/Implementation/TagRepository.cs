@@ -18,12 +18,12 @@ public class TagRepository : ITagRepository
         return _dbContext.Tags.ToList();
     }
 
-    public TagEntity ? GetById( int id )
+    public TagEntity? GetById( int id )
     {
         return _dbContext.Tags.SingleOrDefault(tag => id.Equals( tag.TagId ));
     }
 
-    public TagEntity ? GetByName( string name )
+    public TagEntity? GetByName( string name )
     {
         return _dbContext.Tags.SingleOrDefault(tag => name == tag.Name);
     }
