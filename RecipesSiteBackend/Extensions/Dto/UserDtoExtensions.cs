@@ -7,14 +7,14 @@ public static class UserDtoExtensions
 {
     public static UserEntity ConvertToUserEntity( this UserDto dto )
     {
-        return new UserEntity()
+        return new UserEntity
         {
-            UserId = Guid.Parse(dto.id),
-            UserName = dto.userName,
-            Login = dto.login,
-            Password = dto.password,
-            Description = dto.description,
-            Role = Enum.TryParse( dto.role, out Role role) ? role : Role.User
+            UserId = Guid.Parse(dto.Id),
+            UserName = dto.UserName,
+            Login = dto.Login,
+            Password = dto.Password,
+            Description = dto.Description,
+            Role = Enum.TryParse( dto.Role, out Role role) ? role : Role.User
         };
     }
 } 

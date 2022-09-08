@@ -1,29 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 
 namespace RecipesSiteBackend.Storage.Entities.Implementation;
 
 public class UserEntity : AbstractEntity
 {
-    [Key]
     public Guid UserId { get; set; }
-    
-    [Required]
-    [MaxLength(250)]
     public string UserName { get; set; }
-
-    [Required]
-    [MaxLength(250)]
     public string Login { get; set; }
-    
-    [Required] 
-    [MaxLength(500)]
     public string Password { get; set; }
-    
-    [Required] 
-    [MaxLength(500)]
     public string Description { get; set; }
     
     public Role Role { get; set; }
+    
+    
+    public List<RecipeEntity> CreatedRecipes { get; set; }
+    public List<LikeEntity> Likes { get; set; }
+    public List<FavoriteEntity> Favorites { get; set; }
 }
 
 

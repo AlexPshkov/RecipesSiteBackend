@@ -1,13 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RecipesSiteBackend.Storage.Entities.Implementation.secondary;
+﻿namespace RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 
 public class TagEntity : AbstractEntity
 {
-    [Key]
     public int TagId { get; set; }
-    
-    [Required] 
-    [MaxLength(500)]
     public string Name { get; set; }
+    
+    public List<RecipeEntity> Recipes { get; set; }
 }

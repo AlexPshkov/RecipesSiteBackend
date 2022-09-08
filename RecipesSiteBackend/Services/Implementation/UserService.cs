@@ -1,58 +1,60 @@
-﻿using RecipesSiteBackend.Storage.Entities.Implementation;
+﻿using RecipesSiteBackend.Dto.Recipe;
+using RecipesSiteBackend.Extensions.Entity;
+using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
+using RecipesSiteBackend.Storage.UoW;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
 public class UserService : IUserService
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
-    private readonly ILogger<UserService> _logger;
-    
-    public UserService(IUserRepository userRepository, ILogger<UserService> logger )
+
+    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork )
     {
         _userRepository = userRepository;
-        _logger = logger;
+        _unitOfWork = unitOfWork;
     }
-
-    /**
-     * Gets entity
-     */
-    public UserEntity ? GetUserById( Guid id )
+    
+    public UserEntity? GetUserById( Guid id )
     {
         return _userRepository.GetById( id );
     }
     
-    /**
-     * Gets entity
-     */
-    public UserEntity ?  GetUserByLogin( string login )
+    public UserEntity?  GetUserByLogin( string login )
     {
         return _userRepository.GetByLogin( login );
     }
     
-    /**
-     * Save use entity
-     */
-    public void Save( UserEntity userEntity )
+    public List<RecipeDto> GetFavorites( Guid userId )
     {
-        _logger.LogInformation( "Save entity to database {1}", userEntity.Login );
-        _userRepository.Create( userEntity );
+        return _userRepository.GetFavorites( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
     }
     
-    /**
-     * Checks login and password. If ok, then return user object
-     */
-    public UserEntity ? GetByLoginAndPassword( string login, string password )
+    public List<RecipeDto> GetLikes( Guid userId )
+    {
+        return _userRepository.GetLikes( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+    }
+    
+    public List<RecipeDto> GetCreatedRecipes( Guid userId )
+    {
+        return _userRepository.GetCreatedRecipes( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+    }
+    
+    public void Save( UserEntity userEntity )
+    {
+        _userRepository.Create( userEntity );
+        _unitOfWork.SaveChanges();
+    }
+    
+    public UserEntity? GetByLoginAndPassword( string login, string password )
     {
         var userEntity = _userRepository.GetByLogin( login );
         if ( userEntity == null )
         {
-            _logger.LogInformation( "No user with Login = {Login}", login );
             return null;
         }
-        if ( userEntity.Password.Equals( password ) ) return userEntity;
-        _logger.LogInformation( "Wrong password for Login = {Login} and Password = {Password}", login, password );
-        return null;
-
+        return userEntity.Password.Equals( password ) ? userEntity : null;
     }
 }

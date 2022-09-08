@@ -5,26 +5,12 @@ namespace RecipesSiteBackend.Storage.Entities.Implementation;
 
 public class RecipeEntity : AbstractEntity
 {
-    [Key]
+ 
     public int RecipeId { get; set; }
-
-    [Required]
-    [MaxLength(500)]
     public string RecipeName { get; set; }
-    
-    [MaxLength(1000)]
     public string RecipeDescription { get; set; }
-
-    [Required]
-    [MaxLength(1000)]
-    public string ImageUrl { get; set; }
-
-    [Required]
-    [MaxLength(50)]
+    public string ImagePath { get; set; }
     public string RequiredTime { get; set; }
-    
-    [Required]
-    [MaxLength(50)]
     public string ServingsAmount { get; set; }
     
     public Guid UserId { get; set; }
