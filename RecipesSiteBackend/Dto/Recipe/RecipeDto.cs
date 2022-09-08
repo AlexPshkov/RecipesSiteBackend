@@ -13,6 +13,7 @@ public class RecipeDto
     public string UserLogin { get; set; } = "";
     public int FavoritesAmount { get; set; }
     public int LikesAmount { get; set; }
+    public bool IsCreator { get; set; }
     public bool IsLiked { get; set; }
     public bool IsFavorite { get; set; }
     public List<TagDto> Tags { get; set; }

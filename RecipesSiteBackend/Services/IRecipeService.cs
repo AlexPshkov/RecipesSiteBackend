@@ -7,6 +7,11 @@ public interface IRecipeService
 {
     public List<RecipeEntity> GetAllRecipes();
 
+    /**
+     * <exception cref="NoSuchRecipeException"></exception>
+     * <exception cref="NoPermException"></exception>
+     */
+    public void RemoveRecipe( int recipeId, Guid userId );
     
     /**
      * <exception cref="InvalidRecipeException"></exception>>

@@ -45,7 +45,7 @@ public class RecipesController : Controller
         return Ok( _recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
     }
     
-    [Route("{recipeId:int}")]
+    [Route( "{recipeId:int}" )]
     [HttpGet]
     public IActionResult Get( int recipeId )
     {
@@ -60,7 +60,27 @@ public class RecipesController : Controller
         }
     }
     
-    [Route("save")]
+    [Route( "{recipeId:int}" )]
+    [Authorize]
+    [HttpDelete]
+    public IActionResult Delete( int recipeId )
+    {
+        _logger.LogDebug( "Remove recipe with {Id}", recipeId );
+        try
+        {
+            _recipeService.RemoveRecipe( recipeId, UserId.GetValueOrDefault( Guid.Empty ));
+            return Ok();
+        }
+        catch ( NoSuchRecipeException exception )
+        {
+            return NotFound( exception.Message );
+        }
+        catch ( NoPermException exception )
+        {
+            return BadRequest( exception.Message );
+        }
+    }
+    
     [Authorize]
     [HttpPost]
     public IActionResult Save( RecipeDto recipeDto )
@@ -68,7 +88,8 @@ public class RecipesController : Controller
         _logger.LogDebug( "Save new recipe" );
         try
         {
-            var createdId = _recipeService.SaveRecipe( recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() ) );
+            var recipeEntity = recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() );
+            var createdId = _recipeService.SaveRecipe( recipeEntity );
             return Ok( new RecipeCreated
             {
                 RecipeId = createdId
@@ -81,7 +102,7 @@ public class RecipesController : Controller
         }
     }
 
-    [Route("like/{recipeId:int}")]
+    [Route( "like/{recipeId:int}" )]
     [Authorize]
     [HttpPut]
     public IActionResult Like( int recipeId )
@@ -97,7 +118,7 @@ public class RecipesController : Controller
         }
     }
     
-    [Route("favorite/{recipeId:int}")]
+    [Route( "favorite/{recipeId:int}" )]
     [Authorize]
     [HttpPut]
     public IActionResult Favorite( int recipeId )

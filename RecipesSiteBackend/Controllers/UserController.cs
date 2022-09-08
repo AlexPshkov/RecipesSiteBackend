@@ -21,13 +21,13 @@ public class UserController : Controller
         _userService = userService;
     }
     
-    [Route("{userLogin}")]
+    [Route( "{userLogin}" )]
     [HttpGet]
-    public IActionResult GetUser(string userLogin)
+    public IActionResult GetUser( string userLogin )
     {
         _logger.LogDebug( "Get some user object request" );
         var userEntity = _userService.GetUserByLogin( userLogin );
-        return Ok(userEntity.ConvertToUserDto());
+        return Ok( userEntity.ConvertToUserDto() );
     }
     
     [HttpGet]
@@ -36,16 +36,16 @@ public class UserController : Controller
     {
         _logger.LogDebug( "Get own user object request" );
         var userEntity = _userService.GetUserById( UserId );
-        return Ok(userEntity.ConvertToUserDto());
+        return Ok( userEntity.ConvertToUserDto() );
     }
     
     [HttpGet]
     [Authorize]
-    [Route("favorites")]
+    [Route( "favorites" )]
     public IActionResult GetFavorites()
     {
         _logger.LogDebug( "Get favorites recipes request" );
-        return Ok(_userService.GetFavorites( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
+        return Ok( _userService.GetFavorites( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
 }

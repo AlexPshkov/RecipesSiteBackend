@@ -1,4 +1,5 @@
 ﻿using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
@@ -34,11 +35,49 @@ public class RecipeService : IRecipeService
         return recipe;
     }
     
-    public int SaveRecipe( RecipeEntity recipeEntity )
+    public int SaveRecipe( RecipeEntity newRecipeEntity )
     {
-        _repository.Create( recipeEntity.ValidateRecipe() );
+        var newValidRecipe = newRecipeEntity.ValidateRecipe();
+        if ( newRecipeEntity.RecipeId == 0 )
+        {
+            _repository.Create( newValidRecipe );
+            _unitOfWork.SaveChanges();
+            return newValidRecipe.RecipeId;
+        }
+        
+        var domainRecipe = _repository.GetById( newRecipeEntity.RecipeId ) ?? throw new NoSuchRecipeException( newRecipeEntity.RecipeId );
+
+        if ( newValidRecipe.RecipeId != domainRecipe.RecipeId )
+        {
+            throw new NoPermException( "Another RecipeId" );
+        }
+        
+        if ( newValidRecipe.UserId != domainRecipe.UserId )
+        {
+            throw new NoPermException( "Another UserId" );
+        }
+        
+        _repository.Update( domainRecipe.Combine( newValidRecipe ) );
         _unitOfWork.SaveChanges();
-        return recipeEntity.RecipeId;
+        return newValidRecipe.RecipeId;
+    }
+    
+    public void RemoveRecipe( int recipeId, Guid userId )
+    {
+        var recipeEntity = _repository.GetById( recipeId );
+
+        if ( recipeEntity == null )
+        {
+            throw new NoSuchRecipeException( recipeId );
+        }
+        
+        if ( recipeEntity.UserId != userId )
+        {
+            throw new NoPermException("Another userId");
+        }
+        
+        _repository.Delete( recipeEntity );
+        _unitOfWork.SaveChanges();
     }
     
     public RecipeEntity HandleLike( int recipeId, Guid userId )
