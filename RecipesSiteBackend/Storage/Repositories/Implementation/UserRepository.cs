@@ -19,16 +19,28 @@ public class UserRepository : IUserRepository
         return _dbContext.UserAccounts.ToList();
     }
 
-    public UserEntity ? GetById( Guid id )
+    public UserEntity? GetById( Guid id )
     {
-        return _dbContext.UserAccounts.SingleOrDefault(user => id.Equals( user.UserId ));
+        return _dbContext.UserAccounts.SingleOrDefault( user => id.Equals( user.UserId ) );
     }
 
-    public UserEntity ?  GetByLogin( string login )
+    public UserEntity? GetByLogin( string login )
     {
-        return _dbContext.UserAccounts.SingleOrDefault(user => login == user.Login);
+        return _dbContext.UserAccounts.SingleOrDefault( user => login == user.Login );
     }
 
+    /**
+     * <remarks>Returns big entity with all children entities</remarks>
+     */
+    public UserEntity? GetFullById( Guid id )
+    {
+        return _dbContext.UserAccounts
+            .Include( x => x.CreatedRecipes )
+            .Include( x => x.Likes )
+            .Include( x => x.Favorites )
+            .SingleOrDefault( user => id.Equals( user.UserId ) );
+    }
+    
     public List<RecipeEntity> GetCreatedRecipes( Guid userId )
     {
         var user = _dbContext.UserAccounts

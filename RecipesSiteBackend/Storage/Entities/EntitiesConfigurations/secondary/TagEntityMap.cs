@@ -13,6 +13,8 @@ public class TagEntityMap : IEntityTypeConfiguration<TagEntity>
 
         builder.Property( x => x.Name );
 
+        builder.HasIndex( x => x.Name );
+        
         builder.HasMany( x => x.Recipes )
             .WithMany( p => p.Tags );
     }

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto.Recipe;
 using RecipesSiteBackend.Dto.Responses;
-using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Services;
@@ -27,8 +26,8 @@ public class RecipesController : Controller
             return null;
         }
     }
-    
-    
+
+
     private readonly ILogger<RecipesController> _logger;
     private readonly IRecipeService _recipeService;
 
@@ -37,69 +36,43 @@ public class RecipesController : Controller
         _logger = logger;
         _recipeService = recipeService;
     }
-    
+
     [HttpGet]
     public IActionResult GetAll()
     {
         _logger.LogDebug( "Get all recipes request" );
-        return Ok( _recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ));
+        return Ok( _recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
-    
+
     [Route( "{recipeId:int}" )]
     [HttpGet]
     public IActionResult Get( int recipeId )
     {
         _logger.LogDebug( "Get current recipe with {Id}", recipeId );
-        try
-        {
-            return Ok( _recipeService.GetRecipe( recipeId ).ConvertToRecipeDto( UserId ) );
-        }
-        catch ( NoSuchRecipeException exception )
-        {
-            return NotFound( exception.Message );
-        }
+        return Ok( _recipeService.GetRecipe( recipeId ).ConvertToRecipeDto( UserId ) );
     }
-    
+
     [Route( "{recipeId:int}" )]
     [Authorize]
     [HttpDelete]
     public IActionResult Delete( int recipeId )
     {
         _logger.LogDebug( "Remove recipe with {Id}", recipeId );
-        try
-        {
-            _recipeService.RemoveRecipe( recipeId, UserId.GetValueOrDefault( Guid.Empty ));
-            return Ok();
-        }
-        catch ( NoSuchRecipeException exception )
-        {
-            return NotFound( exception.Message );
-        }
-        catch ( NoPermException exception )
-        {
-            return BadRequest( exception.Message );
-        }
+        _recipeService.RemoveRecipe( recipeId, UserId.GetValueOrDefault( Guid.Empty ) );
+        return Ok();
     }
-    
+
     [Authorize]
     [HttpPost]
     public IActionResult Save( RecipeDto recipeDto )
     {
         _logger.LogDebug( "Save new recipe" );
-        try
+        var recipeEntity = recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() );
+        var createdId = _recipeService.SaveRecipe( recipeEntity );
+        return Ok( new RecipeCreated
         {
-            var recipeEntity = recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() );
-            var createdId = _recipeService.SaveRecipe( recipeEntity );
-            return Ok( new RecipeCreated
-            {
-                RecipeId = createdId
-            } );
-        }
-        catch ( InvalidRecipeException exception )
-        {
-            _logger.LogWarning( "Try to save invalid recipe" );
-            return BadRequest();
-        }
+            RecipeId = createdId
+        } );
     }
 
     [Route( "like/{recipeId:int}" )]
@@ -108,30 +81,15 @@ public class RecipesController : Controller
     public IActionResult Like( int recipeId )
     {
         _logger.LogDebug( "Like request received" );
-        try
-        {
-            return Ok( _recipeService.HandleLike( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
-        }
-        catch ( NoSuchRecipeException exception )
-        {
-            return NotFound(exception.Message);
-        }
+        return Ok( _recipeService.HandleLike( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
     }
-    
+
     [Route( "favorite/{recipeId:int}" )]
     [Authorize]
     [HttpPut]
     public IActionResult Favorite( int recipeId )
     {
         _logger.LogDebug( "Favorite request received" );
-        try
-        {
-            return Ok( _recipeService.HandleFavorite( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
-        }
-        catch ( NoSuchRecipeException exception )
-        {
-            return NotFound(exception.Message);
-        }
+        return Ok( _recipeService.HandleFavorite( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
     }
-    
 }

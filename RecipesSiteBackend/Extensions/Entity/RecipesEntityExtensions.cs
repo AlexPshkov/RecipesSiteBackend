@@ -7,11 +7,14 @@ namespace RecipesSiteBackend.Extensions.Entity;
 
 public static class RecipesEntityExtensions
 {
-    public static RecipeDto ConvertToRecipeDto( this RecipeEntity?  recipeEntity, Guid? userId = null )
+    /**
+     * <exception cref="NoSuchRecipeException"></exception>
+     */
+    public static RecipeDto ConvertToRecipeDto( this RecipeEntity? recipeEntity, Guid? userId = null )
     {
         if ( recipeEntity == null )
         {
-            return new RecipeDto();
+            throw new NoSuchRecipeException();
         }
         return new RecipeDto
         {

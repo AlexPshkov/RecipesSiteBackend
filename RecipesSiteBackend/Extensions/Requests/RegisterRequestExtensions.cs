@@ -14,7 +14,7 @@ public static class RegisterRequestExtensions
             UserName = request.Name,
             Description = "",
             Login = request.Login.ToLower(),
-            Password = request.Password
+            Password = BCrypt.Net.BCrypt.HashPassword( request.Password )
         };
     }
 }

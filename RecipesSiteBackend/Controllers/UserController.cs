@@ -1,7 +1,11 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipesSiteBackend.Dto;
+using RecipesSiteBackend.Dto.Requests;
+using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
+using RecipesSiteBackend.Extensions.Requests;
 using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
@@ -14,20 +18,13 @@ public class UserController : Controller
     
     private readonly ILogger<UserController> _logger;
     private readonly IUserService _userService;
+    private readonly ISecurityService _securityService;
 
-    public UserController(ILogger<UserController> logger, IUserService userService)
+    public UserController(ILogger<UserController> logger, IUserService userService, ISecurityService securityService)
     {
         _logger = logger;
         _userService = userService;
-    }
-    
-    [Route( "{userLogin}" )]
-    [HttpGet]
-    public IActionResult GetUser( string userLogin )
-    {
-        _logger.LogDebug( "Get some user object request" );
-        var userEntity = _userService.GetUserByLogin( userLogin );
-        return Ok( userEntity.ConvertToUserDto() );
+        _securityService = securityService;
     }
     
     [HttpGet]
@@ -48,4 +45,27 @@ public class UserController : Controller
         return Ok( _userService.GetFavorites( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
+    [HttpGet]
+    [Authorize]
+    [Route( "statistic" )]
+    public IActionResult GetStatistic()
+    {
+        _logger.LogDebug( "Get user statistic request" );
+        var userEntity = _userService.GetFullUserById( UserId );
+        return Ok( userEntity.ConvertToUserStatisticDto() );
+    }
+    
+    [Authorize]
+    [HttpPost]
+    public IActionResult Save( ChangeUserDataRequest changeUserData )
+    {
+        _logger.LogDebug( "Save new user" );
+        var userEntity = changeUserData.ConvertToUserEntity( UserId );
+        _userService.Save( userEntity );
+        _logger.LogDebug( "Register: New token for {Login}", userEntity.Login );
+        return Ok(new TokenDto
+        {
+            AccessToken = _securityService.GetToken( userEntity )
+        });
+    }
 }

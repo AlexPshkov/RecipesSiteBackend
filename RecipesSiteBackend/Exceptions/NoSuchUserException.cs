@@ -6,7 +6,11 @@ public class NoSuchUserException : Exception
     {
     }
 
-    public NoSuchUserException( Guid userId ) : base($"No such user with ID:{userId}")
+    public NoSuchUserException( Guid userId ) : base($"No such user with ID: {userId}")
+    {
+    }
+    
+    public NoSuchUserException( string userLogin ) : base($"No such user with Login: {userLogin}")
     {
     }
 

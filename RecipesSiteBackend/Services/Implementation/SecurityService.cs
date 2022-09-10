@@ -7,16 +7,27 @@ using RecipesSiteBackend.Storage.Entities.Implementation;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
-public class TokenService : ITokenService
+public class SecurityService : ISecurityService
 {
 
     private readonly AuthOptions _authOptions;
 
-    public TokenService(IOptions<AuthOptions> authOptions)
+    public SecurityService(IOptions<AuthOptions> authOptions)
     {
         _authOptions = authOptions.Value;
     }
 
+    public string HashPassword( string password )
+    {
+        var salt = BCrypt.Net.BCrypt.GenerateSalt();
+        return BCrypt.Net.BCrypt.HashPassword( password, salt );
+    }
+    
+    public bool VerifyPassword( string password, string passwordHash )
+    {
+        return BCrypt.Net.BCrypt.Verify( password, passwordHash );
+    }
+    
     public string GetToken( UserEntity userEntity )
     {
         var credentials = new SigningCredentials( _authOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256 );

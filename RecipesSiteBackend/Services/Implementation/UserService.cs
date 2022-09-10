@@ -1,6 +1,9 @@
-﻿using RecipesSiteBackend.Storage.Entities.Implementation;
+﻿using RecipesSiteBackend.Exceptions;
+using RecipesSiteBackend.Extensions.Entity;
+using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
+using RecipesSiteBackend.Validators;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
@@ -18,6 +21,11 @@ public class UserService : IUserService
     public UserEntity? GetUserById( Guid id )
     {
         return _userRepository.GetById( id );
+    }
+    
+    public UserEntity? GetFullUserById( Guid id )
+    {
+        return _userRepository.GetFullById( id );
     }
     
     public UserEntity?  GetUserByLogin( string login )
@@ -40,10 +48,34 @@ public class UserService : IUserService
         return _userRepository.GetCreatedRecipes( userId );
     }
     
-    public void Save( UserEntity userEntity )
+    public UserEntity Save( UserEntity userEntity )
     {
-        _userRepository.Create( userEntity );
+        var newValidUser = userEntity.ValidateUser();
+        var domainUser = _userRepository.GetById( userEntity.UserId );
+        
+        if ( domainUser == null)
+        { 
+            _userRepository.Create( newValidUser );
+            _unitOfWork.SaveChanges();
+            return userEntity;
+        }
+
+        if ( domainUser.UserId != newValidUser.UserId )
+        {
+            throw new NoPermException( "Another UserId" );
+        }
+
+        if ( domainUser.Login != newValidUser.Login )
+        {
+            if ( _userRepository.GetByLogin( newValidUser.Login ) != null )
+            {
+                throw new UserAlreadyExistsException( newValidUser.Login );
+            }
+        }
+        
+        _userRepository.Update( domainUser.Combine( newValidUser ) );
         _unitOfWork.SaveChanges();
+        return domainUser;
     }
     
     public UserEntity? GetByLoginAndPassword( string login, string password )
