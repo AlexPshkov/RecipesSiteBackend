@@ -5,6 +5,7 @@ using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
 using RecipesSiteBackend.Validators;
+using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
@@ -27,13 +28,15 @@ public class RecipeService : IRecipeService
         return _repository.GetAll();
     }
 
-    public RecipeEntity GetRecipe( int recipeId)
+    public RecipeEntity GetRecipe( int recipeId )
     {
         var recipe = _repository.GetById( recipeId );
         if ( recipe == null )
         {
             throw new NoSuchRecipeException( recipeId );
         }
+        recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.View ) );
+        _unitOfWork.SaveChanges();
         return recipe;
     }
 
@@ -119,6 +122,8 @@ public class RecipeService : IRecipeService
         {
             recipe.Likes.Add(likeEntity );
         }
+        recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Like ) );
+        
         _unitOfWork.SaveChanges();
         return recipe;
     }
@@ -148,7 +153,15 @@ public class RecipeService : IRecipeService
         {
             recipe.Favorites.Add(favoriteEntity );
         }
+        
+        recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Favorite ) );
         _unitOfWork.SaveChanges();
+        return recipe;
+    }
+    
+    public RecipeEntity GetBestRecipe( Action action )
+    {
+        var recipe = _repository.GetBestRecipe( action ) ?? throw new NoSuchRecipeException();
         return recipe;
     }
 }

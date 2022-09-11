@@ -47,6 +47,24 @@ public class UserController : Controller
     
     [HttpGet]
     [Authorize]
+    [Route( "likes" )]
+    public IActionResult GetLikes()
+    {
+        _logger.LogDebug( "Get liked recipes request" );
+        return Ok( _userService.GetLikes( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+    }
+    
+    [HttpGet]
+    [Authorize]
+    [Route( "created" )]
+    public IActionResult GetCreated()
+    {
+        _logger.LogDebug( "Get created recipes request" );
+        return Ok( _userService.GetCreatedRecipes( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+    }
+    
+    [HttpGet]
+    [Authorize]
     [Route( "statistic" )]
     public IActionResult GetStatistic()
     {

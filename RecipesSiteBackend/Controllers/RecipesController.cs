@@ -7,6 +7,7 @@ using RecipesSiteBackend.Dto.Responses;
 using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Services;
+using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Controllers;
 
@@ -91,5 +92,13 @@ public class RecipesController : Controller
     {
         _logger.LogDebug( "Favorite request received" );
         return Ok( _recipeService.HandleFavorite( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
+    }
+    
+    [Route( "best-recipe" )]
+    [HttpGet]
+    public IActionResult BestRecipe( int recipeId )
+    {
+        _logger.LogDebug( "Best recipe request received" );
+        return Ok( _recipeService.GetBestRecipe( Action.View ).ConvertToRecipeDto( UserId ) );
     }
 }

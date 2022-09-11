@@ -1,5 +1,6 @@
 ﻿using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Storage.Entities.Implementation;
+using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Services;
 
@@ -32,4 +33,9 @@ public interface IRecipeService
      * <exception cref="NoSuchRecipeException"></exception>
      */
     public RecipeEntity HandleFavorite( int recipeId, Guid userId );
+
+    /**
+     * <exception cref="NoSuchRecipeException"></exception>
+     */
+    public RecipeEntity GetBestRecipe( Action action );
 }

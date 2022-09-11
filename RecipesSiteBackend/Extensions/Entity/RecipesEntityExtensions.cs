@@ -2,6 +2,7 @@
 using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
+using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Extensions.Entity;
 
@@ -56,8 +57,29 @@ public static class RecipesEntityExtensions
         recipeEntity.RequiredTime = newRecipeEntity.RequiredTime;
         recipeEntity.ServingsAmount = newRecipeEntity.ServingsAmount;
         return recipeEntity;
-    } 
-    
+    }
+
+    /**
+     * <exception cref="NoSuchRecipeException"></exception>
+     */
+    public static RecipeActionEntity ConvertToRecipeActionEntity( this RecipeEntity? recipeEntity, Action action )
+    {
+        if ( recipeEntity == null )
+        {
+            throw new NoSuchRecipeException();
+        }
+
+        return new RecipeActionEntity
+        {
+            ActionId = 0,
+            RecipeId = recipeEntity.RecipeId,
+            Recipe = recipeEntity,
+            User = recipeEntity.User,
+            UserId = recipeEntity.UserId,
+            Action = action
+        };
+    }
+
     public static FavoriteDto ConvertToFavoriteDto( this FavoriteEntity ?  favoriteEntity )
     {
         if ( favoriteEntity == null )
