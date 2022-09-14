@@ -164,4 +164,9 @@ public class RecipeService : IRecipeService
         var recipe = _repository.GetBestRecipe( action ) ?? throw new NoSuchRecipeException();
         return recipe;
     }
+
+    public async Task<List<RecipeEntity>> MakeSearch( string searchQuery )
+    {
+        return await _repository.MakeSearch( searchQuery );
+    }
 }

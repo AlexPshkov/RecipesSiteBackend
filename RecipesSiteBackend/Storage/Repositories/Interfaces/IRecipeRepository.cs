@@ -7,6 +7,7 @@ public interface IRecipeRepository : IEntityRepository<RecipeEntity>
 {
     public List<RecipeEntity> GetAll();
 
+    public Task<List<RecipeEntity>> MakeSearch( string searchQuery );
     public RecipeEntity? GetBestRecipe( Action action );
     public RecipeEntity? GetById( int id );
 }

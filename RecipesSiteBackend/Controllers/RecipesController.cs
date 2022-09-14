@@ -52,7 +52,7 @@ public class RecipesController : Controller
         _logger.LogDebug( "Get current recipe with {Id}", recipeId );
         return Ok( _recipeService.GetRecipe( recipeId ).ConvertToRecipeDto( UserId ) );
     }
-
+    
     [Route( "{recipeId:int}" )]
     [Authorize]
     [HttpDelete]
@@ -100,5 +100,14 @@ public class RecipesController : Controller
     {
         _logger.LogDebug( "Best recipe request received" );
         return Ok( _recipeService.GetBestRecipe( Action.View ).ConvertToRecipeDto( UserId ) );
+    }
+    
+    [Route( "search/{searchQuery}" )]
+    [HttpGet]
+    public async Task<IActionResult> Search( string searchQuery )
+    {
+        _logger.LogDebug( "Make search query: {Query}", searchQuery );
+        var recipes = await _recipeService.MakeSearch( searchQuery );
+        return Ok( recipes.ConvertAll( x => x.ConvertToRecipeDto( UserId ) ) );
     }
 }

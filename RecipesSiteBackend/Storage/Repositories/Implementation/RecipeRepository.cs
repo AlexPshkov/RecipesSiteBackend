@@ -55,4 +55,17 @@ public class RecipeRepository : IRecipeRepository
     {
         _dbContext.Recipes.Remove( entity );
     }
+    
+    public async Task<List<RecipeEntity>> MakeSearch( string searchQuery )
+    {
+        var recipes = _dbContext.Recipes
+            .Where( x => searchQuery.Contains( x.RecipeName ) || x.RecipeName.Contains( searchQuery ) )
+            .ToHashSet();
+        var tags = _dbContext.Tags
+            .Include( x => x.Recipes )
+            .Where( x => searchQuery.Contains( x.Name ) );
+        await tags.ForEachAsync( tag => recipes.UnionWith( tag.Recipes ) );
+        
+        return recipes.ToList();
+    } 
 }

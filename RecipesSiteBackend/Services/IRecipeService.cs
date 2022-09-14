@@ -38,4 +38,6 @@ public interface IRecipeService
      * <exception cref="NoSuchRecipeException"></exception>
      */
     public RecipeEntity GetBestRecipe( Action action );
+
+    public Task<List<RecipeEntity>> MakeSearch( string searchQuery );
 }
