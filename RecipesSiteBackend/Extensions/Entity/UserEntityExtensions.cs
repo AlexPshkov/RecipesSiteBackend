@@ -35,11 +35,18 @@ public static class UserEntityExtensions
         {
             throw new NoSuchUserException();
         }
+
+        var createdRecipes = userEntity.CreatedRecipes;
+        var totalLikes = 0;
+        var totalFavorites = 0;
+        createdRecipes.ForEach( x => totalLikes += x.Likes.Count );
+        createdRecipes.ForEach( x => totalFavorites += x.Favorites.Count );
+        
         return new UserStatisticDto()
         {
-            CreatedRecipesAmount = userEntity.CreatedRecipes.Count,
-            LikedRecipesAmount = userEntity.Likes.Count,
-            FavoritesRecipesAmount = userEntity.Favorites.Count
+            CreatedRecipesAmount = createdRecipes.Count,
+            LikedRecipesAmount = totalLikes,
+            FavoritesRecipesAmount = totalFavorites
         };
     } 
     
