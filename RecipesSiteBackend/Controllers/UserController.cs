@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto;
 using RecipesSiteBackend.Dto.Requests;
-using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Extensions.Requests;
+using RecipesSiteBackend.Filters;
 using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
 
 [ApiController]
 [Route( "api/[controller]" )]
+[TypeFilter( typeof( ExceptionsFilter ) )]
 public class UserController : Controller
 {
     private Guid UserId => Guid.Parse( User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value );

@@ -6,6 +6,7 @@ using RecipesSiteBackend.Dto.Recipe;
 using RecipesSiteBackend.Dto.Responses;
 using RecipesSiteBackend.Extensions.Dto;
 using RecipesSiteBackend.Extensions.Entity;
+using RecipesSiteBackend.Filters;
 using RecipesSiteBackend.Services;
 using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
@@ -13,6 +14,7 @@ namespace RecipesSiteBackend.Controllers;
 
 [ApiController]
 [Route( "api/[controller]" )]
+[TypeFilter( typeof( ExceptionsFilter ) )]
 public class RecipesController : Controller
 {
     private Guid? UserId

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto;
 using RecipesSiteBackend.Dto.Requests;
+using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Extensions.Requests;
+using RecipesSiteBackend.Filters;
 using RecipesSiteBackend.Services;
 using RecipesSiteBackend.Validators;
 
@@ -9,6 +11,7 @@ namespace RecipesSiteBackend.Controllers;
 
 [ApiController]
 [Route( "api/[controller]" )]
+[TypeFilter( typeof( ExceptionsFilter ) )]
 public class AuthController : ControllerBase
 {
     
@@ -30,7 +33,7 @@ public class AuthController : ControllerBase
         var user = _userService.GetUserByLogin( request.Login );
         if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password  ) )
         {
-            return Unauthorized();
+            throw new InvalidAuthException();
         }
         
         _logger.LogDebug( "Login: New token for {Login}", user.Login );
@@ -47,7 +50,7 @@ public class AuthController : ControllerBase
         var user = request.ConvertToUserEntity().ValidateUser();
         if ( _userService.GetUserByLogin( user.Login ) != null )
         {
-            return Conflict("User with same login already exists");
+            throw new UserAlreadyExistsException( user.Login );
         }
         _userService.Save( user );
         

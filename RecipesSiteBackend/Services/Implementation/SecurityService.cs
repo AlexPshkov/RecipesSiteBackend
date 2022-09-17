@@ -12,7 +12,7 @@ public class SecurityService : ISecurityService
 
     private readonly AuthOptions _authOptions;
 
-    public SecurityService(IOptions<AuthOptions> authOptions)
+    public SecurityService( IOptions<AuthOptions> authOptions )
     {
         _authOptions = authOptions.Value;
     }

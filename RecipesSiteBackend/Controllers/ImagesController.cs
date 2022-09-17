@@ -2,13 +2,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto.Responses;
+using RecipesSiteBackend.Filters;
 using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
 
-[ApiController]
 [Authorize]
+[ApiController]
 [Route( "api/[controller]" )]
+[TypeFilter( typeof( ExceptionsFilter ) )]
 public class ImagesController : Controller
 {
     private Guid UserId => Guid.Parse( User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value );
