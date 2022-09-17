@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto;
 using RecipesSiteBackend.Dto.Requests;
+using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Extensions.Requests;
 using RecipesSiteBackend.Filters;
@@ -34,6 +35,10 @@ public class UserController : Controller
     {
         _logger.LogDebug( "Get own user object request" );
         var userEntity = await _userService.GetUserById( UserId );
+        if ( userEntity == null )
+        {
+            throw new InvalidAuthException();
+        }
         return Ok( userEntity.ConvertToUserDto() );
     }
     

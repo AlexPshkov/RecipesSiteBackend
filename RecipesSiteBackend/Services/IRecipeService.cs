@@ -12,7 +12,7 @@ public interface IRecipeService
      * <exception cref="NoSuchRecipeException"></exception>
      * <exception cref="NoPermException"></exception>
      */
-    public void RemoveRecipe( int recipeId, Guid userId );
+    public Task<bool> RemoveRecipe( int recipeId, Guid userId );
     
     /**
      * <exception cref="InvalidRecipeException"></exception>>

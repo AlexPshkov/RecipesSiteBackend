@@ -28,9 +28,7 @@ public class RecipeRepository : IRecipeRepository
     
     public async void Create( RecipeEntity entity )
     {
-        var userEntity = await _dbContext.UserAccounts.SingleOrDefaultAsync( userEntity => userEntity.UserId == entity.UserId );
-        entity.User = userEntity!;
-        userEntity!.CreatedRecipes.Add( entity );
+        await _dbContext.Recipes.AddAsync( entity );
     }
 
     public void Update( RecipeEntity entity )
@@ -56,7 +54,7 @@ public class RecipeRepository : IRecipeRepository
         var recipe = await recipes.FirstOrDefaultAsync();
         if ( recipe == null )
         {
-            throw new NoSuchRecipeException();
+            throw new NoBestRecipeException();
         }
         return await GetById( recipe.id );
     }

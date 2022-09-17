@@ -85,7 +85,7 @@ public class RecipeService : IRecipeService
         return newValidRecipe.RecipeId;
     }
 
-    public async void RemoveRecipe( int recipeId, Guid userId )
+    public async Task<bool> RemoveRecipe( int recipeId, Guid userId )
     {
         var recipeEntity = await _repository.GetById( recipeId );
 
@@ -100,7 +100,7 @@ public class RecipeService : IRecipeService
         }
 
         _repository.Delete( recipeEntity );
-        await _unitOfWork.SaveChanges();
+        return await _unitOfWork.SaveChanges();
     }
 
     public async Task<RecipeEntity> HandleLike( int recipeId, Guid userId )

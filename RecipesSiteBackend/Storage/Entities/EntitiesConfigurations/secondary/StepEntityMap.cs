@@ -11,7 +11,7 @@ public class StepEntityMap : IEntityTypeConfiguration<StepEntity>
         builder.HasKey( x => x.StepId );
         builder.Property( x => x.StepId ).ValueGeneratedOnAdd();
 
-        builder.Property( x => x.Description );
+        builder.Property( x => x.Description ).HasMaxLength( 1000 );
         builder.Property( x => x.RecipeId );
         
         builder.HasOne( x => x.Recipe )

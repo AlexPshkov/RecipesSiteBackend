@@ -60,10 +60,10 @@ public class RecipesController : Controller
     [Route( "{recipeId:int}" )]
     [Authorize]
     [HttpDelete]
-    public IActionResult Delete( int recipeId )
+    public async Task<IActionResult> Delete( int recipeId )
     {
         _logger.LogDebug( "Remove recipe with {Id}", recipeId );
-        _recipeService.RemoveRecipe( recipeId, UserId.GetValueOrDefault( Guid.Empty ) );
+        await _recipeService.RemoveRecipe( recipeId, UserId.GetValueOrDefault( Guid.Empty ) );
         return Ok();
     }
 
@@ -116,5 +116,14 @@ public class RecipesController : Controller
         _logger.LogDebug( "Make search query: {Query}", searchQuery );
         var recipes = await _recipeService.MakeSearch( searchQuery );
         return Ok( recipes.ConvertAll( x => x.ConvertToRecipeDto( UserId ) ) );
+    }
+    
+    [Route( "search" )]
+    [HttpGet]
+    public async Task<IActionResult> SearchEmpty()
+    {
+        _logger.LogDebug( "Get all recipes request" );
+        var recipes = await _recipeService.GetAllRecipes();
+        return Ok( recipes.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
 }

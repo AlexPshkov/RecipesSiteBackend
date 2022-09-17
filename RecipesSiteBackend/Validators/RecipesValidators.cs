@@ -1,5 +1,4 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
@@ -23,14 +22,27 @@ public static class RecipesValidators
 
     private static List<IngredientEntity>  ValidateIngredients( this IEnumerable<IngredientEntity> ingredientEntities )
     {
-        return ingredientEntities.Where( entity => 
+        var ingredients = ingredientEntities.Where( entity => 
             !entity.Title.IsNullOrEmpty() &&
             !entity.Description.IsNullOrEmpty() ).ToList();
+
+        foreach ( var ingredientEntity in ingredients )
+        {
+            if ( ingredientEntity.Title.Length > 450 ) ingredientEntity.Title = ingredientEntity.Title[..450];
+            if ( ingredientEntity.Description.Length > 950 ) ingredientEntity.Description = ingredientEntity.Description[..950];
+        }
+        return ingredients;
     }
     
     private static List<StepEntity>  ValidateSteps( this IEnumerable<StepEntity> stepEntities )
     {
-        return stepEntities.Where( entity => !entity.Description.IsNullOrEmpty() ).ToList();
+        var steps = stepEntities.Where( entity => !entity.Description.IsNullOrEmpty() ).ToList();
+        
+        foreach ( var stepEntity in steps )
+        {
+            if ( stepEntity.Description.Length > 450 ) stepEntity.Description = stepEntity.Description[..450];
+        }
+        return steps;
     }
 
     private static List<TagEntity>  ValidateTags( this IEnumerable<TagEntity> tagEntities )
