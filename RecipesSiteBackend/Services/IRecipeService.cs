@@ -1,5 +1,4 @@
-﻿using RecipesSiteBackend.Exceptions;
-using RecipesSiteBackend.Exceptions.Implementation;
+﻿using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
@@ -7,7 +6,7 @@ namespace RecipesSiteBackend.Services;
 
 public interface IRecipeService
 {
-    public List<RecipeEntity> GetAllRecipes();
+    public Task<List<RecipeEntity>> GetAllRecipes();
 
     /**
      * <exception cref="NoSuchRecipeException"></exception>
@@ -18,27 +17,27 @@ public interface IRecipeService
     /**
      * <exception cref="InvalidRecipeException"></exception>>
      */
-    public int SaveRecipe( RecipeEntity recipeEntity );
+    public Task<int> SaveRecipe( RecipeEntity recipeEntity );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeEntity GetRecipe( int recipeId );
+    public Task<RecipeEntity> GetRecipe( int recipeId );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeEntity HandleLike( int recipeId, Guid userId );
+    public Task<RecipeEntity> HandleLike( int recipeId, Guid userId );
     
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeEntity HandleFavorite( int recipeId, Guid userId );
+    public Task<RecipeEntity> HandleFavorite( int recipeId, Guid userId );
 
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public RecipeEntity GetBestRecipe( Action action );
+    public Task<RecipeEntity> GetBestRecipe( Action action );
 
     public Task<List<RecipeEntity>> MakeSearch( string searchQuery );
 }

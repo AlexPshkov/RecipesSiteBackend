@@ -4,7 +4,6 @@ namespace RecipesSiteBackend.Storage.Repositories.Interfaces;
 
 public interface ITagRepository : IEntityRepository<TagEntity>
 {
-    public List<TagEntity> GetAll();
-    public TagEntity? GetById( int id );
-    public TagEntity? GetByName( string name );
+    public Task<TagEntity?> GetById( int id );
+    public Task<TagEntity?> GetByName( string name );
 }

@@ -2,5 +2,5 @@
 
 public interface IUnitOfWork
 {
-    bool SaveChanges(CancellationToken cancellationToken = default);
+    public Task<bool> SaveChanges( CancellationToken cancellationToken = default );
 }

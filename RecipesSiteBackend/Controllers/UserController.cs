@@ -30,57 +30,59 @@ public class UserController : Controller
     
     [HttpGet]
     [Authorize]
-    public IActionResult GetUser()
+    public async Task<OkObjectResult> GetUser()
     {
         _logger.LogDebug( "Get own user object request" );
-        var userEntity = _userService.GetUserById( UserId );
+        var userEntity = await _userService.GetUserById( UserId );
         return Ok( userEntity.ConvertToUserDto() );
     }
     
     [HttpGet]
     [Authorize]
     [Route( "favorites" )]
-    public IActionResult GetFavorites()
+    public async Task<IActionResult> GetFavorites()
     {
         _logger.LogDebug( "Get favorites recipes request" );
-        return Ok( _userService.GetFavorites( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+        var favorites = await _userService.GetFavorites( UserId );
+        return Ok( favorites.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
     [HttpGet]
     [Authorize]
     [Route( "likes" )]
-    public IActionResult GetLikes()
+    public async Task<IActionResult> GetLikes()
     {
         _logger.LogDebug( "Get liked recipes request" );
-        return Ok( _userService.GetLikes( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+        var likes = await _userService.GetLikes( UserId );
+        return Ok( likes.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
     [HttpGet]
     [Authorize]
     [Route( "created" )]
-    public IActionResult GetCreated()
+    public async Task<IActionResult> GetCreated()
     {
         _logger.LogDebug( "Get created recipes request" );
-        return Ok( _userService.GetCreatedRecipes( UserId ).ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+        var created = await _userService.GetCreatedRecipes( UserId );
+        return Ok( created.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
     [HttpGet]
     [Authorize]
     [Route( "statistic" )]
-    public IActionResult GetStatistic()
+    public async Task<IActionResult> GetStatistic()
     {
         _logger.LogDebug( "Get user statistic request" );
-        var userEntity = _userService.GetFullUserById( UserId );
+        var userEntity = await _userService.GetFullUserById( UserId );
         return Ok( userEntity.ConvertToUserStatisticDto() );
     }
     
     [Authorize]
     [HttpPost]
-    public IActionResult Save( ChangeUserDataRequest changeUserData )
+    public async Task<OkObjectResult> Save( ChangeUserDataRequest changeUserData )
     {
-        _logger.LogDebug( "Save new user" );
         var userEntity = changeUserData.ConvertToUserEntity( UserId );
-        _userService.Save( userEntity );
+        await _userService.Save( userEntity );
         _logger.LogDebug( "Register: New token for {Login}", userEntity.Login );
         return Ok(new TokenDto
         {

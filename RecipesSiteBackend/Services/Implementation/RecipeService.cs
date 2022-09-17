@@ -1,5 +1,4 @@
-﻿using RecipesSiteBackend.Exceptions;
-using RecipesSiteBackend.Exceptions.Implementation;
+﻿using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
@@ -12,7 +11,6 @@ namespace RecipesSiteBackend.Services.Implementation;
 
 public class RecipeService : IRecipeService
 {
-
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRecipeRepository _repository;
     private readonly ITagRepository _tagRepository;
@@ -23,91 +21,98 @@ public class RecipeService : IRecipeService
         _repository = repository;
         _tagRepository = tagRepository;
     }
-    
-    public List<RecipeEntity> GetAllRecipes()
+
+    public Task<List<RecipeEntity>> GetAllRecipes()
     {
         return _repository.GetAll();
     }
 
-    public RecipeEntity GetRecipe( int recipeId )
+    public async Task<RecipeEntity> GetRecipe( int recipeId )
     {
-        var recipe = _repository.GetById( recipeId );
+        var recipe = await _repository.GetById( recipeId );
         if ( recipe == null )
         {
             throw new NoSuchRecipeException( recipeId );
         }
+
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.View ) );
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChanges();
         return recipe;
     }
 
-    private List<TagEntity> GetDomainTags( List<TagEntity> tags )
+    private async Task<List<TagEntity>> GetDomainTags( List<TagEntity> tags )
     {
         var list = new List<TagEntity>();
         foreach ( var tagEntity in tags )
         {
-           list.Add( _tagRepository.GetByName( tagEntity.Name ) ?? tagEntity );
+            var domainTag = await _tagRepository.GetByName( tagEntity.Name );
+            list.Add( domainTag ?? tagEntity );
         }
         return list;
-    } 
-    
-    public int SaveRecipe( RecipeEntity newRecipeEntity )
+    }
+
+    public async Task<int> SaveRecipe( RecipeEntity newRecipeEntity )
     {
         var newValidRecipe = newRecipeEntity.ValidateRecipe();
-        newValidRecipe.Tags = GetDomainTags( newRecipeEntity.Tags );
-        
+        newValidRecipe.Tags = await GetDomainTags( newRecipeEntity.Tags );
+
         if ( newRecipeEntity.RecipeId == 0 )
         {
             _repository.Create( newValidRecipe );
-            _unitOfWork.SaveChanges();
+            await _unitOfWork.SaveChanges();
             return newValidRecipe.RecipeId;
         }
-        
-        var domainRecipe = _repository.GetById( newRecipeEntity.RecipeId ) ?? throw new NoSuchRecipeException( newRecipeEntity.RecipeId );
+
+        var domainRecipe = await _repository.GetById( newRecipeEntity.RecipeId );
+
+        if ( domainRecipe == null )
+        {
+            throw new NoSuchRecipeException( newRecipeEntity.RecipeId );
+        }
 
         if ( newValidRecipe.RecipeId != domainRecipe.RecipeId )
         {
             throw new NoPermException( "Another RecipeId" );
         }
-        
+
         if ( newValidRecipe.UserId != domainRecipe.UserId )
         {
             throw new NoPermException( "Another UserId" );
         }
-        
+
         _repository.Update( domainRecipe.Combine( newValidRecipe ) );
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChanges();
         return newValidRecipe.RecipeId;
     }
-    
-    public void RemoveRecipe( int recipeId, Guid userId )
+
+    public async void RemoveRecipe( int recipeId, Guid userId )
     {
-        var recipeEntity = _repository.GetById( recipeId );
+        var recipeEntity = await _repository.GetById( recipeId );
 
         if ( recipeEntity == null )
         {
             throw new NoSuchRecipeException( recipeId );
         }
-        
+
         if ( recipeEntity.UserId != userId )
         {
-            throw new NoPermException("Another userId");
+            throw new NoPermException( "Another userId" );
         }
-        
+
         _repository.Delete( recipeEntity );
-        _unitOfWork.SaveChanges();
+        await _unitOfWork.SaveChanges();
     }
-    
-    public RecipeEntity HandleLike( int recipeId, Guid userId )
+
+    public async Task<RecipeEntity> HandleLike( int recipeId, Guid userId )
     {
-        var recipe = _repository.GetById( recipeId );
+        var recipe = await _repository.GetById( recipeId );
         if ( recipe == null )
         {
             throw new NoSuchRecipeException();
         }
-        
+
         var domainLike = recipe.Likes.Find( input => input.UserId.Equals( userId ) );
-        
+
         var likeEntity = new LikeEntity
         {
             LikeId = domainLike?.LikeId ?? 0,
@@ -121,24 +126,25 @@ public class RecipeService : IRecipeService
         }
         else
         {
-            recipe.Likes.Add(likeEntity );
+            recipe.Likes.Add( likeEntity );
         }
+
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Like ) );
-        
-        _unitOfWork.SaveChanges();
+
+        await _unitOfWork.SaveChanges();
         return recipe;
     }
-    
-    public RecipeEntity HandleFavorite( int recipeId, Guid userId )
+
+    public async Task<RecipeEntity> HandleFavorite( int recipeId, Guid userId )
     {
-        var recipe = _repository.GetById( recipeId );
+        var recipe = await _repository.GetById( recipeId );
         if ( recipe == null )
         {
             throw new NoSuchRecipeException();
         }
-        
+
         var domainFavorite = recipe.Favorites.Find( input => input.UserId.Equals( userId ) );
-        
+
         var favoriteEntity = new FavoriteEntity()
         {
             FavoriteId = domainFavorite?.FavoriteId ?? 0,
@@ -152,22 +158,27 @@ public class RecipeService : IRecipeService
         }
         else
         {
-            recipe.Favorites.Add(favoriteEntity );
+            recipe.Favorites.Add( favoriteEntity );
         }
-        
+
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Favorite ) );
-        _unitOfWork.SaveChanges();
-        return recipe;
-    }
-    
-    public RecipeEntity GetBestRecipe( Action action )
-    {
-        var recipe = _repository.GetBestRecipe( action ) ?? throw new NoSuchRecipeException();
+        await _unitOfWork.SaveChanges();
         return recipe;
     }
 
-    public async Task<List<RecipeEntity>> MakeSearch( string searchQuery )
+    public async Task<RecipeEntity> GetBestRecipe( Action action )
     {
-        return await _repository.MakeSearch( searchQuery );
+        var recipe = await _repository.GetBestRecipe( action );
+        if ( recipe == null )
+        {
+            throw new NoSuchRecipeException();
+        }
+
+        return recipe;
+    }
+
+    public Task<List<RecipeEntity>> MakeSearch( string searchQuery )
+    {
+        return _repository.MakeSearch( searchQuery );
     }
 }

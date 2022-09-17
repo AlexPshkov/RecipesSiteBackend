@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 
@@ -14,60 +15,67 @@ public class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
     
-    public List<UserEntity> GetAll()
+    public Task<UserEntity?> GetById( Guid id )
     {
-        return _dbContext.UserAccounts.ToList();
+        return _dbContext.UserAccounts.SingleOrDefaultAsync( user => id.Equals( user.UserId ) );
     }
 
-    public UserEntity? GetById( Guid id )
+    public Task<UserEntity?> GetByLogin( string login )
     {
-        return _dbContext.UserAccounts.SingleOrDefault( user => id.Equals( user.UserId ) );
-    }
-
-    public UserEntity? GetByLogin( string login )
-    {
-        return _dbContext.UserAccounts.SingleOrDefault( user => login == user.Login );
+        return _dbContext.UserAccounts.SingleOrDefaultAsync( user => login == user.Login );
     }
 
     /**
      * <remarks>Returns big entity with all children entities</remarks>
      */
-    public UserEntity? GetFullById( Guid id )
+    public Task<UserEntity?> GetFullById( Guid id )
     {
         return _dbContext.UserAccounts
             .Include( x => x.CreatedRecipes )
             .Include( x => x.Likes )
             .Include( x => x.Favorites )
-            .SingleOrDefault( user => id.Equals( user.UserId ) );
+            .SingleOrDefaultAsync( user => id.Equals( user.UserId ) );
     }
     
-    public List<RecipeEntity> GetCreatedRecipes( Guid userId )
+    public async Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId )
     {
-        var user = _dbContext.UserAccounts
+        var user = await _dbContext.UserAccounts
             .Include( x => x.CreatedRecipes )
-            .SingleOrDefault(user => userId.Equals( user.UserId ));
-        return user == null ? new List<RecipeEntity>() : user.CreatedRecipes.ToList();
+            .SingleOrDefaultAsync(user => userId.Equals( user.UserId ));
+        if ( user == null )
+        {
+            throw new NoSuchUserException();
+        }
+        return user.CreatedRecipes.ToList();
     }
 
-    public List<RecipeEntity> GetFavorites( Guid userId )
+    public async Task<List<RecipeEntity>> GetFavorites( Guid userId )
     {
-        var user = _dbContext.UserAccounts
+        var user = await _dbContext.UserAccounts
             .Include( x => x.Favorites )
-            .SingleOrDefault(user => userId.Equals( user.UserId ));
-        return user == null ? new List<RecipeEntity>() : user.Favorites.ConvertAll( input => input.Recipe );
+            .SingleOrDefaultAsync(user => userId.Equals( user.UserId ));
+        if ( user == null )
+        {
+            throw new NoSuchUserException();
+        }
+        return user.Favorites.ConvertAll( input => input.Recipe );
     }
     
-    public List<RecipeEntity> GetLikes( Guid userId )
+    public async Task<List<RecipeEntity>> GetLikes( Guid userId )
     {
-        var user = _dbContext.UserAccounts
+        var user = await _dbContext.UserAccounts
             .Include( x => x.Likes )
-            .SingleOrDefault(user => userId.Equals( user.UserId ));
-        return user == null ? new List<RecipeEntity>() : user.Likes.ConvertAll( input => input.Recipe );
+            .SingleOrDefaultAsync(user => userId.Equals( user.UserId ));
+        if ( user == null )
+        {
+            throw new NoSuchUserException();
+        }
+        return user.Likes.ConvertAll( input => input.Recipe );
     }
     
-    public void Create( UserEntity entity )
+    public async void Create( UserEntity entity )
     {
-        _dbContext.UserAccounts.Add( entity );
+        await _dbContext.UserAccounts.AddAsync( entity );
     }
 
     public void Update( UserEntity entity )

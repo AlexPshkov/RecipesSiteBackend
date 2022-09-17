@@ -1,4 +1,5 @@
-﻿using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
+﻿using Microsoft.EntityFrameworkCore;
+using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 
 namespace RecipesSiteBackend.Storage.Repositories.Implementation;
@@ -18,19 +19,19 @@ public class TagRepository : ITagRepository
         return _dbContext.Tags.ToList();
     }
 
-    public TagEntity? GetById( int id )
+    public Task<TagEntity?> GetById( int id )
     {
-        return _dbContext.Tags.SingleOrDefault(tag => id.Equals( tag.TagId ));
+        return _dbContext.Tags.SingleOrDefaultAsync(tag => id.Equals( tag.TagId ));
     }
 
-    public TagEntity? GetByName( string name )
+    public Task<TagEntity?> GetByName( string name )
     {
-        return _dbContext.Tags.SingleOrDefault(tag => name == tag.Name);
+        return _dbContext.Tags.SingleOrDefaultAsync(tag => name == tag.Name);
     }
 
-    public void Create( TagEntity entity )
+    public async void Create( TagEntity entity )
     {
-        _dbContext.Tags.Add( entity );
+        await _dbContext.Tags.AddAsync( entity );
     }
 
     public void Update( TagEntity entity )

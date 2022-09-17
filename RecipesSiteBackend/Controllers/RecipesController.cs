@@ -41,18 +41,20 @@ public class RecipesController : Controller
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
         _logger.LogDebug( "Get all recipes request" );
-        return Ok( _recipeService.GetAllRecipes().ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+        var recipes = await _recipeService.GetAllRecipes();
+        return Ok( recipes.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
 
     [Route( "{recipeId:int}" )]
     [HttpGet]
-    public IActionResult Get( int recipeId )
+    public async Task<IActionResult> Get( int recipeId )
     {
         _logger.LogDebug( "Get current recipe with {Id}", recipeId );
-        return Ok( _recipeService.GetRecipe( recipeId ).ConvertToRecipeDto( UserId ) );
+        var recipe = await _recipeService.GetRecipe( recipeId );
+        return Ok( recipe.ConvertToRecipeDto( UserId ) );
     }
     
     [Route( "{recipeId:int}" )]
@@ -67,11 +69,11 @@ public class RecipesController : Controller
 
     [Authorize]
     [HttpPost]
-    public IActionResult Save( RecipeDto recipeDto )
+    public async Task<OkObjectResult> Save( RecipeDto recipeDto )
     {
         _logger.LogDebug( "Save new recipe" );
         var recipeEntity = recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() );
-        var createdId = _recipeService.SaveRecipe( recipeEntity );
+        var createdId = await _recipeService.SaveRecipe( recipeEntity );
         return Ok( new RecipeCreated
         {
             RecipeId = createdId
@@ -81,27 +83,30 @@ public class RecipesController : Controller
     [Route( "like/{recipeId:int}" )]
     [Authorize]
     [HttpPut]
-    public IActionResult Like( int recipeId )
+    public async Task<IActionResult> Like( int recipeId )
     {
         _logger.LogDebug( "Like request received" );
-        return Ok( _recipeService.HandleLike( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
+        var recipe = await _recipeService.HandleLike( recipeId, UserId!.Value );
+        return Ok( recipe.ConvertToRecipeDto( UserId ) );
     }
 
     [Route( "favorite/{recipeId:int}" )]
     [Authorize]
     [HttpPut]
-    public IActionResult Favorite( int recipeId )
+    public async Task<OkObjectResult> Favorite( int recipeId )
     {
         _logger.LogDebug( "Favorite request received" );
-        return Ok( _recipeService.HandleFavorite( recipeId, UserId!.Value ).ConvertToRecipeDto( UserId ) );
+        var recipe = await _recipeService.HandleFavorite( recipeId, UserId!.Value );
+        return Ok( recipe.ConvertToRecipeDto( UserId ) );
     }
     
     [Route( "best-recipe" )]
     [HttpGet]
-    public IActionResult BestRecipe( int recipeId )
+    public async Task<IActionResult> BestRecipe( int recipeId )
     {
         _logger.LogDebug( "Best recipe request received" );
-        return Ok( _recipeService.GetBestRecipe( Action.View ).ConvertToRecipeDto( UserId ) );
+        var bestRecipe = await _recipeService.GetBestRecipe( Action.View );
+        return Ok( bestRecipe.ConvertToRecipeDto( UserId ) );
     }
     
     [Route( "search/{searchQuery}" )]

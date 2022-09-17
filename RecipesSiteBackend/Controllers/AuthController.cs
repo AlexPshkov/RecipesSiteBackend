@@ -28,9 +28,9 @@ public class AuthController : ControllerBase
 
     [Route("login")]
     [HttpPost]
-    public IActionResult Login( [FromBody] LoginRequest request )
+    public async Task<OkObjectResult> Login( [FromBody] LoginRequest request )
     {
-        var user = _userService.GetUserByLogin( request.Login );
+        var user = await _userService.GetUserByLogin( request.Login );
         if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password  ) )
         {
             throw new InvalidAuthException();
@@ -45,14 +45,14 @@ public class AuthController : ControllerBase
     
     [Route("register")]
     [HttpPost]
-    public IActionResult Register( [FromBody] RegisterRequest request )
+    public async Task<OkObjectResult> Register( [FromBody] RegisterRequest request )
     {
         var user = request.ConvertToUserEntity().ValidateUser();
-        if ( _userService.GetUserByLogin( user.Login ) != null )
+        if ( await _userService.GetUserByLogin( user.Login ) != null )
         {
             throw new UserAlreadyExistsException( user.Login );
         }
-        _userService.Save( user );
+        await _userService.Save( user );
         
         _logger.LogDebug( "Register: New token for {Login}", user.Login );
         return Ok(new TokenDto

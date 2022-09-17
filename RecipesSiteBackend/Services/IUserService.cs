@@ -4,18 +4,17 @@ namespace RecipesSiteBackend.Services;
 
 public interface IUserService
 {
-    public UserEntity? GetUserById( Guid id );
-    
+    public Task<UserEntity?> GetUserById( Guid id );
+
     /**
      * <remarks>Returns big entity with all children entities</remarks>
      */
-    public UserEntity? GetFullUserById( Guid id );
+    public Task<UserEntity?> GetFullUserById( Guid id );
     
-    public UserEntity? GetUserByLogin( string login );
-    public UserEntity Save( UserEntity userEntity );
-    public UserEntity? GetByLoginAndPassword( string login, string password );
-
-    public List<RecipeEntity> GetFavorites( Guid userId );
-    public List<RecipeEntity> GetLikes( Guid userId );
-    public List<RecipeEntity> GetCreatedRecipes( Guid userId );
+    public Task<UserEntity?> GetUserByLogin( string login );
+    public Task<UserEntity> Save( UserEntity userEntity );
+    
+    public Task<List<RecipeEntity>> GetFavorites( Guid userId );
+    public Task<List<RecipeEntity>> GetLikes( Guid userId );
+    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId );
 }

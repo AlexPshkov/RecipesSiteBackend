@@ -11,8 +11,9 @@ public class UnitOfWork : IUnitOfWork
         _ctx = ctx;
     }
 
-    public bool SaveChanges(CancellationToken cancellationToken = default)
+    public async Task<bool> SaveChanges(CancellationToken cancellationToken = default)
     {
-        return _ctx.SaveChanges() > 0;
+        var result = await _ctx.SaveChangesAsync( cancellationToken );
+        return result > 0;
     }
 }

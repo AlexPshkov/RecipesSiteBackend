@@ -4,16 +4,13 @@ namespace RecipesSiteBackend.Storage.Repositories.Interfaces;
 
 public interface IUserRepository : IEntityRepository<UserEntity>
 {
+    public Task<UserEntity?> GetById( Guid id );
+    public Task<UserEntity?> GetFullById( Guid id );
 
-    public List<UserEntity> GetAll();
+    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId );
+    public Task<List<RecipeEntity>> GetFavorites( Guid userId );
+    public Task<List<RecipeEntity>> GetLikes( Guid userId );
     
-    public UserEntity? GetById( Guid id );
-    public UserEntity? GetFullById( Guid id );
-
-    public List<RecipeEntity> GetCreatedRecipes( Guid userId );
-    public List<RecipeEntity> GetFavorites( Guid userId );
-    public List<RecipeEntity> GetLikes( Guid userId );
-    
-    public UserEntity? GetByLogin( string login );
+    public Task<UserEntity?> GetByLogin( string login );
 
 }
