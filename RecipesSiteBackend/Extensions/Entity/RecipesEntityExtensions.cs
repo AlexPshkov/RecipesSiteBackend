@@ -41,14 +41,13 @@ public static class RecipesEntityExtensions
     /**
      * <exception cref="NoSuchRecipeException"></exception>
      */
-    public static RecipeEntity Combine( this RecipeEntity?  recipeEntity, RecipeEntity? newRecipeEntity )
+    public static RecipeEntity Combine( this RecipeEntity? recipeEntity, RecipeEntity? newRecipeEntity )
     {
         if ( recipeEntity == null || newRecipeEntity == null )
         {
             throw new NoSuchRecipeException();
         }
-
-        recipeEntity.RecipeId = newRecipeEntity.RecipeId;
+        
         recipeEntity.RecipeName = newRecipeEntity.RecipeName;
         recipeEntity.RecipeDescription = newRecipeEntity.RecipeDescription;
         recipeEntity.Ingredients = newRecipeEntity.Ingredients;
