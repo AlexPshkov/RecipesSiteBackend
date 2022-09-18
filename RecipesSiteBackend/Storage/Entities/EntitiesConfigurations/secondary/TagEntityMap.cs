@@ -11,7 +11,7 @@ public class TagEntityMap : IEntityTypeConfiguration<TagEntity>
         builder.HasKey( x => x.TagId );
         builder.Property( x => x.TagId ).ValueGeneratedOnAdd();
 
-        builder.Property( x => x.Name );
+        builder.Property( x => x.Name ).HasMaxLength( 500 );
 
         builder.HasIndex( x => x.Name );
         

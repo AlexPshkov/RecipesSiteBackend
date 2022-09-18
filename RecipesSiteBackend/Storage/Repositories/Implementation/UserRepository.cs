@@ -37,7 +37,7 @@ public class UserRepository : IUserRepository
             .SingleOrDefaultAsync( user => id.Equals( user.UserId ) );
     }
     
-    public async Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId )
+    public async Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId , int start, int end )
     {
         var user = await _dbContext.UserAccounts
             .Include( x => x.CreatedRecipes )
@@ -46,10 +46,17 @@ public class UserRepository : IUserRepository
         {
             throw new NoSuchUserException();
         }
-        return user.CreatedRecipes.ToList();
+        
+        var recipes = user.CreatedRecipes
+            .OrderByDescending( x => x.RecipeId )
+            .Skip( start - 1 )
+            .Take( end - start + 1 )
+            .ToList();
+
+        return recipes;
     }
 
-    public async Task<List<RecipeEntity>> GetFavorites( Guid userId )
+    public async Task<List<RecipeEntity>> GetFavorites( Guid userId, int start, int end )
     {
         var user = await _dbContext.UserAccounts
             .Include( x => x.Favorites )
@@ -58,19 +65,14 @@ public class UserRepository : IUserRepository
         {
             throw new NoSuchUserException();
         }
-        return user.Favorites.ConvertAll( input => input.Recipe );
-    }
-    
-    public async Task<List<RecipeEntity>> GetLikes( Guid userId )
-    {
-        var user = await _dbContext.UserAccounts
-            .Include( x => x.Likes )
-            .SingleOrDefaultAsync(user => userId.Equals( user.UserId ));
-        if ( user == null )
-        {
-            throw new NoSuchUserException();
-        }
-        return user.Likes.ConvertAll( input => input.Recipe );
+
+        var favorites = user.Favorites
+            .OrderByDescending( x => x.RecipeId )
+            .Skip( start - 1 )
+            .Take( end - start + 1 )
+            .ToList();
+        
+        return favorites.ConvertAll( input => input.Recipe );
     }
     
     public async void Create( UserEntity entity )

@@ -22,9 +22,9 @@ public class RecipeService : IRecipeService
         _tagRepository = tagRepository;
     }
 
-    public Task<List<RecipeEntity>> GetAllRecipes()
+    public Task<List<RecipeEntity>> GetAllRecipes( int start, int end )
     {
-        return _repository.GetAll();
+        return _repository.GetAll( start, end );
     }
 
     public async Task<RecipeEntity> GetRecipe( int recipeId )
@@ -177,8 +177,8 @@ public class RecipeService : IRecipeService
         return recipe;
     }
 
-    public Task<List<RecipeEntity>> MakeSearch( string searchQuery )
+    public Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end )
     {
-        return _repository.MakeSearch( searchQuery );
+        return _repository.MakeSearch( searchQuery, start, end );
     }
 }

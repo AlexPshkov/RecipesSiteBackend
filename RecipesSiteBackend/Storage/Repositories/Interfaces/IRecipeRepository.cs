@@ -5,9 +5,9 @@ namespace RecipesSiteBackend.Storage.Repositories.Interfaces;
 
 public interface IRecipeRepository : IEntityRepository<RecipeEntity>
 {
-    public Task<List<RecipeEntity>> GetAll();
+    public Task<List<RecipeEntity>> GetAll( int start, int end );
 
-    public Task<List<RecipeEntity>> MakeSearch( string searchQuery );
+    public Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end );
     public Task<RecipeEntity?> GetBestRecipe( Action action );
     public Task<RecipeEntity?> GetById( int id );
 }

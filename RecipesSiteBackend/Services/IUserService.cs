@@ -13,8 +13,7 @@ public interface IUserService
     
     public Task<UserEntity?> GetUserByLogin( string login );
     public Task<UserEntity> Save( UserEntity userEntity );
-    
-    public Task<List<RecipeEntity>> GetFavorites( Guid userId );
-    public Task<List<RecipeEntity>> GetLikes( Guid userId );
-    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId );
+
+    public Task<List<RecipeEntity>> GetFavorites( Guid userId, int start, int end );
+    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId, int start, int end );
 }

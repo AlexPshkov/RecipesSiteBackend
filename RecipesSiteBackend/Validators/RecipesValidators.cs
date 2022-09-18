@@ -47,6 +47,12 @@ public static class RecipesValidators
 
     private static List<TagEntity>  ValidateTags( this IEnumerable<TagEntity> tagEntities )
     {
-        return tagEntities.Where( entity => !entity.Name.IsNullOrEmpty() ).ToList();
+        var tags = tagEntities.Where( entity => !entity.Name.IsNullOrEmpty() ).ToList();
+        
+        foreach ( var tagEntity in tags )
+        {
+            if ( tagEntity.Name.Length > 450 ) tagEntity.Name = tagEntity.Name[..450];
+        }
+        return tags;
     }
 }

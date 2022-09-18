@@ -41,15 +41,16 @@ public class RecipesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    [Route( "search" )]
+    public async Task<IActionResult> GetAll( int start = 1, int end = 4 )
     {
         _logger.LogDebug( "Get all recipes request" );
-        var recipes = await _recipeService.GetAllRecipes();
+        var recipes = await _recipeService.GetAllRecipes( start, end );
         return Ok( recipes.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
 
-    [Route( "{recipeId:int}" )]
     [HttpGet]
+    [Route( "{recipeId:int}" )]
     public async Task<IActionResult> Get( int recipeId )
     {
         _logger.LogDebug( "Get current recipe with {Id}", recipeId );
@@ -57,9 +58,9 @@ public class RecipesController : Controller
         return Ok( recipe.ConvertToRecipeDto( UserId ) );
     }
     
-    [Route( "{recipeId:int}" )]
     [Authorize]
     [HttpDelete]
+    [Route( "{recipeId:int}" )]
     public async Task<IActionResult> Delete( int recipeId )
     {
         _logger.LogDebug( "Remove recipe with {Id}", recipeId );
@@ -67,9 +68,9 @@ public class RecipesController : Controller
         return Ok();
     }
 
-    [Authorize]
     [HttpPost]
-    public async Task<OkObjectResult> Save( RecipeDto recipeDto )
+    [Authorize]
+    public async Task<IActionResult> Save( RecipeDto recipeDto )
     {
         _logger.LogDebug( "Save new recipe" );
         var recipeEntity = recipeDto.ConvertToRecipeEntity( UserId ?? throw new AuthenticationException() );
@@ -80,9 +81,9 @@ public class RecipesController : Controller
         } );
     }
 
-    [Route( "like/{recipeId:int}" )]
-    [Authorize]
     [HttpPut]
+    [Authorize]
+    [Route( "like/{recipeId:int}" )]
     public async Task<IActionResult> Like( int recipeId )
     {
         _logger.LogDebug( "Like request received" );
@@ -90,18 +91,18 @@ public class RecipesController : Controller
         return Ok( recipe.ConvertToRecipeDto( UserId ) );
     }
 
-    [Route( "favorite/{recipeId:int}" )]
-    [Authorize]
     [HttpPut]
-    public async Task<OkObjectResult> Favorite( int recipeId )
+    [Authorize]
+    [Route( "favorite/{recipeId:int}" )]
+    public async Task<IActionResult> Favorite( int recipeId )
     {
         _logger.LogDebug( "Favorite request received" );
         var recipe = await _recipeService.HandleFavorite( recipeId, UserId!.Value );
         return Ok( recipe.ConvertToRecipeDto( UserId ) );
     }
     
-    [Route( "best-recipe" )]
     [HttpGet]
+    [Route( "best-recipe" )]
     public async Task<IActionResult> BestRecipe( int recipeId )
     {
         _logger.LogDebug( "Best recipe request received" );
@@ -109,21 +110,12 @@ public class RecipesController : Controller
         return Ok( bestRecipe.ConvertToRecipeDto( UserId ) );
     }
     
-    [Route( "search/{searchQuery}" )]
     [HttpGet]
-    public async Task<IActionResult> Search( string searchQuery )
+    [Route( "search/{searchQuery}" )]
+    public async Task<IActionResult> Search( string searchQuery, int start = 1, int end = 4 )
     {
         _logger.LogDebug( "Make search query: {Query}", searchQuery );
-        var recipes = await _recipeService.MakeSearch( searchQuery );
+        var recipes = await _recipeService.MakeSearch( searchQuery, start, end );
         return Ok( recipes.ConvertAll( x => x.ConvertToRecipeDto( UserId ) ) );
-    }
-    
-    [Route( "search" )]
-    [HttpGet]
-    public async Task<IActionResult> SearchEmpty()
-    {
-        _logger.LogDebug( "Get all recipes request" );
-        var recipes = await _recipeService.GetAllRecipes();
-        return Ok( recipes.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
 }

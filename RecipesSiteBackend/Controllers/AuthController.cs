@@ -26,9 +26,9 @@ public class AuthController : ControllerBase
         _userService = userService;
     }
 
-    [Route("login")]
     [HttpPost]
-    public async Task<OkObjectResult> Login( [FromBody] LoginRequest request )
+    [Route( "login" )]
+    public async Task<IActionResult> Login( [FromBody] LoginRequest request )
     {
         var user = await _userService.GetUserByLogin( request.Login );
         if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password  ) )
@@ -43,9 +43,9 @@ public class AuthController : ControllerBase
         });
     }
     
-    [Route("register")]
     [HttpPost]
-    public async Task<OkObjectResult> Register( [FromBody] RegisterRequest request )
+    [Route( "register ")]
+    public async Task<IActionResult> Register( [FromBody] RegisterRequest request )
     {
         var user = request.ConvertToUserEntity().ValidateUser();
         if ( await _userService.GetUserByLogin( user.Login ) != null )

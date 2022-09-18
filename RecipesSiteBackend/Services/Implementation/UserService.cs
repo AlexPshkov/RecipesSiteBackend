@@ -33,19 +33,14 @@ public class UserService : IUserService
         return _userRepository.GetByLogin( login );
     }
     
-    public Task<List<RecipeEntity>> GetFavorites( Guid userId )
+    public Task<List<RecipeEntity>> GetFavorites( Guid userId, int start, int end )
     {
-        return _userRepository.GetFavorites( userId );
+        return _userRepository.GetFavorites( userId, start, end );
     }
     
-    public Task<List<RecipeEntity>> GetLikes( Guid userId )
+    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId, int start, int end )
     {
-        return _userRepository.GetLikes( userId );
-    }
-    
-    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId )
-    {
-        return _userRepository.GetCreatedRecipes( userId );
+        return _userRepository.GetCreatedRecipes( userId, start, end );
     }
     
     public async Task<UserEntity> Save( UserEntity userEntity )

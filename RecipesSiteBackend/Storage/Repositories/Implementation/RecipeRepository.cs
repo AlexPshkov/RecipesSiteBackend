@@ -16,9 +16,13 @@ public class RecipeRepository : IRecipeRepository
         _dbContext = dbContext;
     }
     
-    public Task<List<RecipeEntity>> GetAll()
+    public Task<List<RecipeEntity>> GetAll( int start, int end )
     {
-        return _dbContext.Recipes.ToListAsync();
+        return _dbContext.Recipes
+            .OrderByDescending( x => x.RecipeId )
+            .Skip( start - 1 )
+            .Take( end - start + 1 )
+            .ToListAsync();
     }
 
     public Task<RecipeEntity?> GetById( int id )
@@ -59,7 +63,7 @@ public class RecipeRepository : IRecipeRepository
         return await GetById( recipe.id );
     }
     
-    public async Task<List<RecipeEntity>> MakeSearch( string searchQuery )
+    public async Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end )
     {
         var recipes = _dbContext.Recipes
             .Where( x => searchQuery.Contains( x.RecipeName ) || x.RecipeName.Contains( searchQuery ) )
@@ -69,6 +73,6 @@ public class RecipeRepository : IRecipeRepository
             .Where( x => searchQuery.Contains( x.Name ) );
         await tags.ForEachAsync( tag => recipes.UnionWith( tag.Recipes ) );
         
-        return recipes.ToList();
+        return recipes.Skip( start - 1 ).Take( end - start + 1 ).ToList();
     } 
 }

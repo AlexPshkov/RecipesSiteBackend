@@ -31,7 +31,7 @@ public class UserController : Controller
     
     [HttpGet]
     [Authorize]
-    public async Task<OkObjectResult> GetUser()
+    public async Task<IActionResult> GetUser()
     {
         _logger.LogDebug( "Get own user object request" );
         var userEntity = await _userService.GetUserById( UserId );
@@ -45,30 +45,20 @@ public class UserController : Controller
     [HttpGet]
     [Authorize]
     [Route( "favorites" )]
-    public async Task<IActionResult> GetFavorites()
+    public async Task<IActionResult> GetFavorites( int start = 1, int end = 4 )
     {
         _logger.LogDebug( "Get favorites recipes request" );
-        var favorites = await _userService.GetFavorites( UserId );
+        var favorites = await _userService.GetFavorites( UserId, start, end );
         return Ok( favorites.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
     [HttpGet]
     [Authorize]
-    [Route( "likes" )]
-    public async Task<IActionResult> GetLikes()
-    {
-        _logger.LogDebug( "Get liked recipes request" );
-        var likes = await _userService.GetLikes( UserId );
-        return Ok( likes.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
-    }
-    
-    [HttpGet]
-    [Authorize]
     [Route( "created" )]
-    public async Task<IActionResult> GetCreated()
+    public async Task<IActionResult> GetCreated( int start = 1, int end = 4 )
     {
         _logger.LogDebug( "Get created recipes request" );
-        var created = await _userService.GetCreatedRecipes( UserId );
+        var created = await _userService.GetCreatedRecipes( UserId, start, end );
         return Ok( created.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
     }
     
@@ -82,9 +72,9 @@ public class UserController : Controller
         return Ok( userEntity.ConvertToUserStatisticDto() );
     }
     
-    [Authorize]
     [HttpPost]
-    public async Task<OkObjectResult> Save( ChangeUserDataRequest changeUserData )
+    [Authorize]
+    public async Task<IActionResult> Save( ChangeUserDataRequest changeUserData )
     {
         var userEntity = changeUserData.ConvertToUserEntity( UserId );
         await _userService.Save( userEntity );
