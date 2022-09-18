@@ -1,16 +1,19 @@
-﻿using RecipesSiteBackend.Dto.Recipe;
-using RecipesSiteBackend.Storage.Entities.Implementation;
+﻿using RecipesSiteBackend.Storage.Entities.Implementation;
 
 namespace RecipesSiteBackend.Services;
 
 public interface IUserService
 {
-    public UserEntity ? GetUserById( Guid id );
-    public UserEntity ? GetUserByLogin( string login );
-    public void Save( UserEntity userEntity );
-    public UserEntity ? GetByLoginAndPassword(string login, string password);
+    public Task<UserEntity?> GetUserById( Guid id );
 
-    public List<RecipeDto> GetFavorites( Guid userId );
-    public List<RecipeDto> GetLikes( Guid userId );
-    public List<RecipeDto> GetCreatedRecipes( Guid userId );
+    /**
+     * <remarks>Returns big entity with all children entities</remarks>
+     */
+    public Task<UserEntity?> GetFullUserById( Guid id );
+    
+    public Task<UserEntity?> GetUserByLogin( string login );
+    public Task<UserEntity> Save( UserEntity userEntity );
+
+    public Task<List<RecipeEntity>> GetFavorites( Guid userId, int start, int end );
+    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId, int start, int end );
 }

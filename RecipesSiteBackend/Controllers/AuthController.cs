@@ -1,59 +1,63 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RecipesSiteBackend.Dto;
+using RecipesSiteBackend.Dto.Requests;
+using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Extensions.Requests;
-using RecipesSiteBackend.Requests;
+using RecipesSiteBackend.Filters;
 using RecipesSiteBackend.Services;
+using RecipesSiteBackend.Validators;
 
 namespace RecipesSiteBackend.Controllers;
 
 [ApiController]
 [Route( "api/[controller]" )]
+[TypeFilter( typeof( ExceptionsFilter ) )]
 public class AuthController : ControllerBase
 {
     
     private readonly ILogger<AuthController> _logger;
     private readonly IUserService _userService;
-    private readonly ITokenService _tokenService;
+    private readonly ISecurityService _securityService;
     
-    public AuthController( ILogger<AuthController> logger, IUserService userService, ITokenService tokenService )
+    public AuthController( ILogger<AuthController> logger, IUserService userService, ISecurityService securityService )
     {
         _logger = logger;
-        _tokenService = tokenService;
+        _securityService = securityService;
         _userService = userService;
     }
 
-    [Route("login")]
     [HttpPost]
-    public IActionResult Login( [FromBody] LoginRequest request )
+    [Route( "login" )]
+    public async Task<IActionResult> Login( [FromBody] LoginRequest request )
     {
-        var user = _userService.GetByLoginAndPassword( request.Login, request.Password );
-        if ( user == null )
+        var user = await _userService.GetUserByLogin( request.Login );
+        if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password  ) )
         {
-            return Unauthorized();
+            throw new InvalidAuthException();
         }
         
         _logger.LogDebug( "Login: New token for {Login}", user.Login );
         return Ok(new TokenDto
         {
-            AccessToken = _tokenService.GetToken( user )
+            AccessToken = _securityService.GetToken( user )
         });
     }
     
-    [Route("register")]
     [HttpPost]
-    public IActionResult Register( [FromBody] RegisterRequest request )
+    [Route( "register ")]
+    public async Task<IActionResult> Register( [FromBody] RegisterRequest request )
     {
-        var user = request.ConvertToUserEntity();
-        if ( _userService.GetUserByLogin( user.Login ) != null )
+        var user = request.ConvertToUserEntity().ValidateUser();
+        if ( await _userService.GetUserByLogin( user.Login ) != null )
         {
-            return Conflict("User with same login already exists");
+            throw new UserAlreadyExistsException( user.Login );
         }
-        _userService.Save( user );
+        await _userService.Save( user );
         
         _logger.LogDebug( "Register: New token for {Login}", user.Login );
         return Ok(new TokenDto
         {
-            AccessToken = _tokenService.GetToken( user )
+            AccessToken = _securityService.GetToken( user )
         });
     }
 } 

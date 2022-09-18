@@ -10,6 +10,7 @@ public class DataBaseContext : DbContext
 {
     public DbSet<UserEntity> UserAccounts { get; set; }
     public DbSet<RecipeEntity> Recipes { get; set; }
+    public DbSet<RecipeActionEntity> RecipeActions { get; set; }
     
     public DbSet<FavoriteEntity> Favorites { get; set; }
     public DbSet<LikeEntity> Likes { get; set; }
@@ -33,7 +34,7 @@ public class DataBaseContext : DbContext
         builder.ApplyConfiguration(new StepEntityMap());
         builder.ApplyConfiguration(new IngredientEntityMap());
         builder.ApplyConfiguration(new TagEntityMap());
-        
+        builder.ApplyConfiguration(new RecipeActionEntityMap());
     }
 
    

@@ -16,5 +16,6 @@ public class UserEntityMap : IEntityTypeConfiguration<UserEntity>
         builder.Property( x => x.Description ).HasMaxLength( 500 );
         builder.Property( x => x.Role );
 
+        builder.HasIndex( x => x.Login );
     }
 }

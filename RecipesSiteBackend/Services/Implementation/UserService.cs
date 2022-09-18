@@ -1,8 +1,9 @@
-﻿using RecipesSiteBackend.Dto.Recipe;
+﻿using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
+using RecipesSiteBackend.Validators;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
@@ -17,44 +18,58 @@ public class UserService : IUserService
         _unitOfWork = unitOfWork;
     }
     
-    public UserEntity? GetUserById( Guid id )
+    public Task<UserEntity?> GetUserById( Guid id )
     {
         return _userRepository.GetById( id );
     }
     
-    public UserEntity?  GetUserByLogin( string login )
+    public Task<UserEntity?> GetFullUserById( Guid id )
+    {
+        return _userRepository.GetFullById( id );
+    }
+    
+    public Task<UserEntity?> GetUserByLogin( string login )
     {
         return _userRepository.GetByLogin( login );
     }
     
-    public List<RecipeDto> GetFavorites( Guid userId )
+    public Task<List<RecipeEntity>> GetFavorites( Guid userId, int start, int end )
     {
-        return _userRepository.GetFavorites( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+        return _userRepository.GetFavorites( userId, start, end );
     }
     
-    public List<RecipeDto> GetLikes( Guid userId )
+    public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId, int start, int end )
     {
-        return _userRepository.GetLikes( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
+        return _userRepository.GetCreatedRecipes( userId, start, end );
     }
     
-    public List<RecipeDto> GetCreatedRecipes( Guid userId )
+    public async Task<UserEntity> Save( UserEntity userEntity )
     {
-        return _userRepository.GetCreatedRecipes( userId ).ConvertAll( input => input.ConvertToRecipeDto() );
-    }
-    
-    public void Save( UserEntity userEntity )
-    {
-        _userRepository.Create( userEntity );
-        _unitOfWork.SaveChanges();
-    }
-    
-    public UserEntity? GetByLoginAndPassword( string login, string password )
-    {
-        var userEntity = _userRepository.GetByLogin( login );
-        if ( userEntity == null )
-        {
-            return null;
+        var newValidUser = userEntity.ValidateUser();
+        var domainUser = await _userRepository.GetById( userEntity.UserId );
+        
+        if ( domainUser == null)
+        { 
+            _userRepository.Create( newValidUser );
+            await _unitOfWork.SaveChanges();
+            return userEntity;
         }
-        return userEntity.Password.Equals( password ) ? userEntity : null;
+
+        if ( domainUser.UserId != newValidUser.UserId )
+        {
+            throw new NoPermException( "Another UserId" );
+        }
+
+        if ( domainUser.Login != newValidUser.Login )
+        {
+            if ( await _userRepository.GetByLogin( newValidUser.Login ) != null )
+            {
+                throw new UserAlreadyExistsException( newValidUser.Login );
+            }
+        }
+        
+        _userRepository.Update( domainUser.Combine( newValidUser ) );
+        await _unitOfWork.SaveChanges();
+        return domainUser;
     }
 }
