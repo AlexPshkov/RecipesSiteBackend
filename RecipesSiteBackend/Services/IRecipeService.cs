@@ -39,5 +39,5 @@ public interface IRecipeService
      */
     public Task<RecipeEntity> GetBestRecipe( Action action );
 
-    public Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end );
+    public Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end );
 }

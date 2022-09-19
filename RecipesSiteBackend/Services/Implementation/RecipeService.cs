@@ -177,8 +177,8 @@ public class RecipeService : IRecipeService
         return recipe;
     }
 
-    public Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end )
+    public Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end )
     {
-        return _repository.MakeSearch( searchQuery, start, end );
+        return _repository.GetRecipesBySearchQuery( searchQuery, start, end );
     }
 }

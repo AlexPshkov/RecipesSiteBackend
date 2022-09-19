@@ -68,8 +68,8 @@ public class UserController : Controller
     public async Task<IActionResult> GetStatistic()
     {
         _logger.LogDebug( "Get user statistic request" );
-        var userEntity = await _userService.GetFullUserById( UserId );
-        return Ok( userEntity.ConvertToUserStatisticDto() );
+        var userStatistic = await _userService.GetUserStatistic( UserId );
+        return Ok( userStatistic.ConvertToUserStatisticDto() );
     }
     
     [HttpPost]

@@ -115,7 +115,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> Search( string searchQuery, int start = 1, int end = 4 )
     {
         _logger.LogDebug( "Make search query: {Query}", searchQuery );
-        var recipes = await _recipeService.MakeSearch( searchQuery, start, end );
+        var recipes = await _recipeService.GetRecipesBySearchQuery( searchQuery, start, end );
         return Ok( recipes.ConvertAll( x => x.ConvertToRecipeDto( UserId ) ) );
     }
 }

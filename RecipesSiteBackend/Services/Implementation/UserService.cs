@@ -1,4 +1,5 @@
-﻿using RecipesSiteBackend.Exceptions.Implementation;
+﻿using RecipesSiteBackend.Dto;
+using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
@@ -22,12 +23,7 @@ public class UserService : IUserService
     {
         return _userRepository.GetById( id );
     }
-    
-    public Task<UserEntity?> GetFullUserById( Guid id )
-    {
-        return _userRepository.GetFullById( id );
-    }
-    
+
     public Task<UserEntity?> GetUserByLogin( string login )
     {
         return _userRepository.GetByLogin( login );
@@ -41,6 +37,11 @@ public class UserService : IUserService
     public Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId, int start, int end )
     {
         return _userRepository.GetCreatedRecipes( userId, start, end );
+    }
+    
+    public async Task<UserStatisticEntity> GetUserStatistic( Guid userId )
+    {
+        return await _userRepository.GetUserStatistic( userId );
     }
     
     public async Task<UserEntity> Save( UserEntity userEntity )

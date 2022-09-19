@@ -29,30 +29,6 @@ public static class UserEntityExtensions
     /**
      * <exception cref="NoSuchUserException"></exception>
      */
-    public static UserStatisticDto ConvertToUserStatisticDto( this UserEntity?  userEntity )
-    {
-        if ( userEntity == null )
-        {
-            throw new NoSuchUserException();
-        }
-
-        var createdRecipes = userEntity.CreatedRecipes;
-        var totalLikes = 0;
-        var totalFavorites = 0;
-        createdRecipes.ForEach( x => totalLikes += x.Likes.Count );
-        createdRecipes.ForEach( x => totalFavorites += x.Favorites.Count );
-        
-        return new UserStatisticDto()
-        {
-            CreatedRecipesAmount = createdRecipes.Count,
-            LikedRecipesAmount = totalLikes,
-            FavoritesRecipesAmount = totalFavorites
-        };
-    } 
-    
-    /**
-     * <exception cref="NoSuchUserException"></exception>
-     */
     public static UserEntity Combine( this UserEntity?  userEntity, UserEntity? newUserEntity )
     {
         if ( userEntity == null || newUserEntity == null )
