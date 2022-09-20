@@ -12,6 +12,7 @@ public class RecipeActionEntityMap : IEntityTypeConfiguration<RecipeActionEntity
         builder.Property( x => x.ActionId ).ValueGeneratedOnAdd();
 
         builder.Property( x => x.Action );
+        builder.Property( x => x.ActionDay );
         builder.Property( x => x.RecipeId );
         builder.Property( x => x.UserId );
     }

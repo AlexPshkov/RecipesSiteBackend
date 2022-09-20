@@ -2,7 +2,8 @@
 
 public class RecipeActionEntity : AbstractEntity
 {
- 
+    public int ActionDay { get; init; }
+
     public int ActionId { get; init; }
     public Action? Action { get; init; }
 

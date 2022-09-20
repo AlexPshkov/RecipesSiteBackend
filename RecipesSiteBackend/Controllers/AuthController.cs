@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
-    [Route( "register " )]
+    [Route( "register" )]
     public async Task<IActionResult> Register( [FromBody] RegisterRequest request )
     {
         var user = request.ConvertToUserEntity().ValidateUser();

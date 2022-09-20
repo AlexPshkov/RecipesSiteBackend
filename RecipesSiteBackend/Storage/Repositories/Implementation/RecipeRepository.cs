@@ -46,14 +46,14 @@ public class RecipeRepository : IRecipeRepository
 
     public async Task<RecipeEntity?> GetBestRecipe( Action action )
     {
-        var actions = _dbContext.RecipeActions.Where( recipe => recipe.Action == action );
-        var recipes = actions
-            .Where( x => x.Action == action )
+        var currentDay = DateTimeOffset.Now.DayOfYear;
+        var actions = _dbContext.RecipeActions
+            .Where( entity => ( entity.Action == action ) && ( entity.ActionDay == currentDay ) )
             .GroupBy( x => x.RecipeId )
             .Select( x => new { id = x.Key, count = x.Count() } )
             .OrderByDescending( x => x.count );
 
-        var recipe = await recipes.FirstOrDefaultAsync();
+        var recipe = await actions.FirstOrDefaultAsync();
         if ( recipe == null )
         {
             throw new NoBestRecipeException();
