@@ -3,14 +3,14 @@
 public class RecipeActionEntity : AbstractEntity
 {
  
-    public int ActionId { get; set; }
-    public Action Action { get; set; }
+    public int ActionId { get; init; }
+    public Action? Action { get; init; }
 
-    public int RecipeId { get; set; }
-    public RecipeEntity Recipe { get; set; }
+    public int RecipeId { get; init; }
+    public RecipeEntity? Recipe { get; init; }
     
-    public Guid UserId { get; set; }
-    public UserEntity User { get; set; }
+    public Guid UserId { get; init; }
+    public UserEntity? User { get; init; }
 }
 
 public enum Action

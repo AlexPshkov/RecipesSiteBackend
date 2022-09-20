@@ -2,9 +2,9 @@
 
 public class StepEntity : AbstractEntity
 {
-    public int StepId { get; set; }
-    public string Description { get; set; }
-    public int RecipeId { get; set; }
+    public int StepId { get; init; }
+    public string Description { get; init; }
+    public int RecipeId { get; init; }
     
-    public RecipeEntity Recipe { get; set; }
+    public RecipeEntity? Recipe { get; init; }
 }

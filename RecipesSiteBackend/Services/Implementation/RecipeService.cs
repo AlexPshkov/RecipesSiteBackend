@@ -4,7 +4,6 @@ using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
-using RecipesSiteBackend.Validators;
 using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Services.Implementation;
@@ -53,14 +52,13 @@ public class RecipeService : IRecipeService
 
     public async Task<int> SaveRecipe( RecipeEntity newRecipeEntity )
     {
-        var newValidRecipe = newRecipeEntity.ValidateRecipe();
-        newValidRecipe.Tags = await GetDomainTags( newRecipeEntity.Tags );
+        newRecipeEntity.Tags = await GetDomainTags( newRecipeEntity.Tags );
 
         if ( newRecipeEntity.RecipeId == 0 )
         {
-            _repository.Create( newValidRecipe );
+            _repository.Create( newRecipeEntity );
             await _unitOfWork.SaveChanges();
-            return newValidRecipe.RecipeId;
+            return newRecipeEntity.RecipeId;
         }
 
         var domainRecipe = await _repository.GetById( newRecipeEntity.RecipeId );
@@ -70,19 +68,19 @@ public class RecipeService : IRecipeService
             throw new NoSuchRecipeException( newRecipeEntity.RecipeId );
         }
 
-        if ( newValidRecipe.RecipeId != domainRecipe.RecipeId )
+        if ( newRecipeEntity.RecipeId != domainRecipe.RecipeId )
         {
             throw new NoPermException( "Another RecipeId" );
         }
 
-        if ( newValidRecipe.UserId != domainRecipe.UserId )
+        if ( newRecipeEntity.UserId != domainRecipe.UserId )
         {
             throw new NoPermException( "Another UserId" );
         }
 
-        _repository.Update( domainRecipe.Combine( newValidRecipe ) );
+        _repository.Update( domainRecipe.Combine( newRecipeEntity ) );
         await _unitOfWork.SaveChanges();
-        return newValidRecipe.RecipeId;
+        return newRecipeEntity.RecipeId;
     }
 
     public async Task<bool> RemoveRecipe( int recipeId, Guid userId )

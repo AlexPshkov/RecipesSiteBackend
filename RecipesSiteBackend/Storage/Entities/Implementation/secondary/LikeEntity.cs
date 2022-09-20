@@ -2,10 +2,10 @@
 
 public class LikeEntity : AbstractEntity
 {
-    public int LikeId { get; set; }
-    public Guid UserId { get; set; }
-    public int RecipeId { get; set; }
+    public int LikeId { get; init; }
+    public Guid UserId { get; init; }
+    public int RecipeId { get; init; }
     
-    public UserEntity User { get; set; }
-    public RecipeEntity Recipe { get; set; }
+    public UserEntity? User { get; init; }
+    public RecipeEntity? Recipe { get; init; }
 }
