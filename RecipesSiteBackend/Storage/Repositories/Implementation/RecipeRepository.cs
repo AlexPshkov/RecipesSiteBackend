@@ -48,18 +48,19 @@ public class RecipeRepository : IRecipeRepository
     {
         var currentDay = DateTimeOffset.Now.DayOfYear;
         var actions = _dbContext.RecipeActions
-            .Where( entity => ( entity.Action == action ) && ( entity.ActionDay == currentDay ) )
+            .Where( entity => entity.ActionDay == currentDay )
+            .Where( entity => entity.Action == action )
             .GroupBy( x => x.RecipeId )
-            .Select( x => new { id = x.Key, count = x.Count() } )
-            .OrderByDescending( x => x.count );
+            .OrderByDescending( x => x.Count() )
+            .Select( x => x.Key );
 
-        var recipe = await actions.FirstOrDefaultAsync();
-        if ( recipe == null )
+        var recipeId = await actions.FirstOrDefaultAsync();
+        if ( recipeId == 0 )
         {
             throw new NoBestRecipeException();
         }
 
-        return await GetById( recipe.id );
+        return await GetById( recipeId );
     }
 
     public async Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end )
