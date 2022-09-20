@@ -14,11 +14,10 @@ namespace RecipesSiteBackend.Controllers;
 [TypeFilter( typeof( ExceptionsFilter ) )]
 public class AuthController : ControllerBase
 {
-    
     private readonly ILogger<AuthController> _logger;
     private readonly IUserService _userService;
     private readonly ISecurityService _securityService;
-    
+
     public AuthController( ILogger<AuthController> logger, IUserService userService, ISecurityService securityService )
     {
         _logger = logger;
@@ -31,20 +30,20 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login( [FromBody] LoginRequest request )
     {
         var user = await _userService.GetUserByLogin( request.Login );
-        if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password  ) )
+        if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password ) )
         {
             throw new InvalidAuthException();
         }
-        
+
         _logger.LogDebug( "Login: New token for {Login}", user.Login );
-        return Ok(new TokenDto
+        return Ok( new TokenDto
         {
             AccessToken = _securityService.GetToken( user )
-        });
+        } );
     }
-    
+
     [HttpPost]
-    [Route( "register ")]
+    [Route( "register " )]
     public async Task<IActionResult> Register( [FromBody] RegisterRequest request )
     {
         var user = request.ConvertToUserEntity().ValidateUser();
@@ -52,15 +51,13 @@ public class AuthController : ControllerBase
         {
             throw new UserAlreadyExistsException( user.Login );
         }
+
         await _userService.Save( user );
-        
+
         _logger.LogDebug( "Register: New token for {Login}", user.Login );
-        return Ok(new TokenDto
+        return Ok( new TokenDto
         {
             AccessToken = _securityService.GetToken( user )
-        });
+        } );
     }
-} 
-
-
-
+}

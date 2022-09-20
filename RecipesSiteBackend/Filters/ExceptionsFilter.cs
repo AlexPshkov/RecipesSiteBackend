@@ -18,7 +18,7 @@ public class ExceptionsFilter : IExceptionFilter
         context.Result = new ContentResult()
         {
             StatusCode = 500,
-            Content = context.Exception.Message
+            Content = "Internal error"
         };
 
     }
