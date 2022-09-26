@@ -15,5 +15,5 @@ public class InvalidAuthException : AbstractRuntimeException
         return base.GetContentResult( 401 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

@@ -18,5 +18,5 @@ public class NoSuchRecipeException : AbstractRuntimeException
         return base.GetContentResult( 404 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

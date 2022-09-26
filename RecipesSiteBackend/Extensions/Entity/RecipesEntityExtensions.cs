@@ -26,7 +26,7 @@ public static class RecipesEntityExtensions
             ImagePath = recipeEntity.ImagePath,
             RequiredTime = recipeEntity.RequiredTime,
             ServingsAmount = recipeEntity.ServingsAmount,
-            UserLogin = recipeEntity.User.Login,
+            UserLogin = recipeEntity.User!.Login,
             FavoritesAmount = recipeEntity.Favorites.Count,
             LikesAmount = recipeEntity.Likes.Count,
             IsCreator = userId != null && recipeEntity.User.UserId == userId,

@@ -11,7 +11,7 @@ public class InvalidRecipeException : AbstractRuntimeException
     }
     
     public InvalidRecipeException( string message, RecipeEntity recipeEntity ) 
-        : base($"Invalid recipe {recipeEntity} Error: {message}")
+        : base( $"Invalid recipe {recipeEntity} Error: {message}" )
     {
     }
 
@@ -20,5 +20,5 @@ public class InvalidRecipeException : AbstractRuntimeException
         return base.GetContentResult( 412 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

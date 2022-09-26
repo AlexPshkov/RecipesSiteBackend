@@ -2,7 +2,7 @@
 
 public class RegisterRequest
 {
-    public string Name { get; set; }
-    public string Login { get; set; }
-    public string Password { get; set; }
+    public string Name { get; init; }
+    public string Login { get; init; }
+    public string Password { get; init; }
 }

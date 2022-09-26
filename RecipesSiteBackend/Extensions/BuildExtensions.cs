@@ -28,6 +28,19 @@ public static class BuildServiceExtensions
                 o => o.UseQuerySplittingBehavior( QuerySplittingBehavior.SplitQuery ) );
         } );
     }
+
+    public static void AddCustomCorsPolicy( this WebApplicationBuilder builder, string policyName )
+    {
+        builder.Services.AddCors( options =>
+        {
+            options.AddPolicy( policyName,
+                policyBuilder => policyBuilder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+            );
+        } );
+    }
     
     public static void AddCustomAuth( this WebApplicationBuilder builder)
     {

@@ -11,6 +11,7 @@ using RecipesSiteBackend.Services;
 
 namespace RecipesSiteBackend.Controllers;
 
+[Authorize]
 [ApiController]
 [Route( "api/[controller]" )]
 [TypeFilter( typeof( ExceptionsFilter ) )]
@@ -30,55 +31,70 @@ public class UserController : Controller
     }
     
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetUser()
     {
-        _logger.LogDebug( "Get own user object request" );
-        var userEntity = await _userService.GetUserById( UserId );
+        var userId = UserId;
+        _logger.LogInformation( "Trying to get user data with ID: {UserId}", userId );
+       
+        var userEntity = await _userService.GetUserById( userId );
         if ( userEntity == null )
         {
             throw new InvalidAuthException();
         }
+        _logger.LogInformation( "Success! Data of user with ID:  {UserId} got", userId );
+        
         return Ok( userEntity.ConvertToUserDto() );
     }
     
     [HttpGet]
-    [Authorize]
     [Route( "favorites" )]
     public async Task<IActionResult> GetFavorites( int start = 1, int end = 4 )
     {
-        _logger.LogDebug( "Get favorites recipes request" );
-        var favorites = await _userService.GetFavorites( UserId, start, end );
-        return Ok( favorites.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+        var userId = UserId;
+        _logger.LogInformation( "Trying to get favorite recipes from user with ID: {UserId}", userId );
+        
+        var favorites = await _userService.GetFavorites( userId, start, end );
+        _logger.LogInformation( "Success! Favorites of user with ID:  {UserId} got", userId );
+        
+        return Ok( favorites.ConvertAll( input => input.ConvertToRecipeDto( userId ) ) );
     }
     
     [HttpGet]
-    [Authorize]
     [Route( "created" )]
     public async Task<IActionResult> GetCreated( int start = 1, int end = 4 )
     {
-        _logger.LogDebug( "Get created recipes request" );
-        var created = await _userService.GetCreatedRecipes( UserId, start, end );
-        return Ok( created.ConvertAll( input => input.ConvertToRecipeDto( UserId ) ) );
+        var userId = UserId;
+        _logger.LogInformation( "Trying to get created recipes from user with ID: {UserId}", userId );
+        
+        var created = await _userService.GetCreatedRecipes( userId, start, end );
+        _logger.LogInformation( "Success! Created recipes of user with ID: {UserId} got", userId );
+        
+        return Ok( created.ConvertAll( input => input.ConvertToRecipeDto( userId ) ) );
     }
     
     [HttpGet]
-    [Authorize]
     [Route( "statistic" )]
     public async Task<IActionResult> GetStatistic()
     {
-        _logger.LogDebug( "Get user statistic request" );
-        var userStatistic = await _userService.GetUserStatistic( UserId );
+        var userId = UserId;
+        _logger.LogInformation( "Trying to get statistic from user with ID: {UserId}", userId );
+        
+        var userStatistic = await _userService.GetUserStatistic( userId );
+        _logger.LogInformation( "Success! Statistic of user with ID: {UserId} got", userId );
+        
         return Ok( userStatistic.ConvertToUserStatisticDto() );
     }
     
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> Save( ChangeUserDataRequest changeUserData )
     {
-        var userEntity = changeUserData.ConvertToUserEntity( UserId );
+        var userId = UserId;
+        _logger.LogInformation( "Trying to change user data from user with ID: {UserId}", userId );
+        
+        var userEntity = changeUserData.ConvertToUserEntity( userId );
         await _userService.Save( userEntity );
-        _logger.LogDebug( "Register: New token for {Login}", userEntity.Login );
+        _logger.LogInformation( "Success! New data for user with ID: {UserId} successfully saved", userId );
+        
         return Ok(new TokenDto
         {
             AccessToken = _securityService.GetToken( userEntity )

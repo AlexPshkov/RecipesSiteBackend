@@ -10,7 +10,7 @@ public class InvalidUserException : AbstractRuntimeException
     }
     
     public InvalidUserException( string message, UserEntity userEntity ) 
-        : base($"Invalid user {userEntity} Error: {message}")
+        : base( $"Invalid user {userEntity} Error: {message}" )
     {
     }
     
@@ -19,5 +19,5 @@ public class InvalidUserException : AbstractRuntimeException
         return base.GetContentResult( 412 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

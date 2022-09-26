@@ -2,5 +2,5 @@
 
 public class ImageLoaded
 {
-    public string ImagePath { get; set; }
+    public string ImagePath { get; init; }
 }

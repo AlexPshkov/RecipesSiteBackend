@@ -2,7 +2,7 @@
 
 public class IngredientDto
 {
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public int Id { get; init; }
+    public string Title { get; init; }
+    public string Description { get; init; }
 }

@@ -14,5 +14,5 @@ public class NoBestRecipeException : AbstractRuntimeException
         return base.GetContentResult( 507 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

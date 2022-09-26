@@ -1,29 +1,39 @@
 using RecipesSiteBackend.Extensions;
 
-var builder = WebApplication.CreateBuilder( args );
+namespace RecipesSiteBackend;
 
-builder.Services.AddCors();
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+public static class Program
+{
+    public static void Main( string[] args )
+    {
+        var applicationBuilder = WebApplication.CreateBuilder( args );
 
-builder.AddCustomDbContext();
-builder.AddCustomAuth();
+        applicationBuilder.AddCustomCorsPolicy( "AllowAll" );
+        
+        applicationBuilder.Services.AddControllers();
+        applicationBuilder.Services.AddEndpointsApiExplorer();
 
-builder.AddStorageInfrastructure();
-builder.AddServices();
+        applicationBuilder.AddCustomDbContext();
+        applicationBuilder.AddCustomAuth();
 
-var app = builder.Build();
+        applicationBuilder.AddStorageInfrastructure();
+        applicationBuilder.AddServices();
 
-app.UseAuthentication();
-app.UseAuthorization();
+        BuildAndRun( applicationBuilder );
+    }
 
-app.UseStaticFiles();
+    private static void BuildAndRun( WebApplicationBuilder applicationBuilder )
+    {
+        var app = applicationBuilder.Build();
 
-app.UseCors(x => x
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+        app.UseCors( "AllowAll" );
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-app.MapControllers();
+        app.UseStaticFiles();
 
-app.Run(); 
+        app.MapControllers();
+
+        app.Run();
+    }
+}

@@ -27,8 +27,12 @@ public class ImagesController : Controller
     [HttpPost]
     public async Task<IActionResult> Save( IFormFile formFile )
     {
-        _logger.LogDebug( "Input file {Name}", formFile.Name );
-        var imagePath = await _imageService.SaveImage( formFile, UserId );
+        var userId = UserId;
+        _logger.LogInformation( "Saving new image file {Name}. Sender UserID: {UserId}", formFile.Name, userId );
+        
+        var imagePath = await _imageService.SaveImage( formFile, userId );
+        
+        _logger.LogInformation( "Success! Image {Name} from UserID: {UserId} successfully saved. Image path: {ImagePath}", formFile.Name, userId, imagePath );
         return Ok( new ImageLoaded
         {
             ImagePath = imagePath

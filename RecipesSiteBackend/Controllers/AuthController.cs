@@ -29,13 +29,14 @@ public class AuthController : ControllerBase
     [Route( "login" )]
     public async Task<IActionResult> Login( [FromBody] LoginRequest request )
     {
+        _logger.LogInformation( "Login request from [{Login}] received", request.Login );
         var user = await _userService.GetUserByLogin( request.Login );
         if ( user == null || !_securityService.VerifyPassword( request.Password, user.Password ) )
         {
             throw new InvalidAuthException();
         }
 
-        _logger.LogDebug( "Login: New token for {Login}", user.Login );
+        _logger.LogInformation( "Login [{Login}] success. Generate new token", request.Login );
         return Ok( new TokenDto
         {
             AccessToken = _securityService.GetToken( user )
@@ -46,6 +47,7 @@ public class AuthController : ControllerBase
     [Route( "register" )]
     public async Task<IActionResult> Register( [FromBody] RegisterRequest request )
     {
+        _logger.LogInformation( "Register request from [{Login}] received", request.Login );
         var user = request.ConvertToUserEntity().ValidateUser();
         if ( await _userService.GetUserByLogin( user.Login ) != null )
         {
@@ -54,7 +56,7 @@ public class AuthController : ControllerBase
 
         await _userService.Save( user );
 
-        _logger.LogDebug( "Register: New token for {Login}", user.Login );
+        _logger.LogInformation( "Register [{Login}] success. Generate new token", request.Login );
         return Ok( new TokenDto
         {
             AccessToken = _securityService.GetToken( user )

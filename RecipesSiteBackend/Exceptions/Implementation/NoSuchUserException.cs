@@ -9,12 +9,12 @@ public class NoSuchUserException : AbstractRuntimeException
     }
     
     public NoSuchUserException( Guid userId ) 
-        : base($"No such user with ID: {userId}")
+        : base( $"No such user with ID: {userId}" )
     {
     }
     
     public NoSuchUserException( string userLogin ) 
-        : base($"No such user with Login: {userLogin}")
+        : base( $"No such user with Login: {userLogin}" )
     {
     }
     
@@ -23,5 +23,5 @@ public class NoSuchUserException : AbstractRuntimeException
         return base.GetContentResult( 404 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

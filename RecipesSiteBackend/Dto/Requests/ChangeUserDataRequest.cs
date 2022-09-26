@@ -2,6 +2,6 @@
 
 public class ChangeUserDataRequest : UserDto
 {
-    public string Id { get; set; }
-    public string Password { get; set; }
+    public string Id { get; init; }
+    public string Password { get; init; }
 }
