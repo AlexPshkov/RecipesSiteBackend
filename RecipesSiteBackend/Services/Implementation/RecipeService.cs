@@ -36,6 +36,7 @@ public class RecipeService : IRecipeService
 
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.View ) );
         await _unitOfWork.SaveChanges();
+        
         return recipe;
     }
 
@@ -47,6 +48,7 @@ public class RecipeService : IRecipeService
             var domainTag = await _tagRepository.GetByName( tagEntity.Name );
             list.Add( domainTag ?? tagEntity );
         }
+        
         return list;
     }
 
@@ -58,6 +60,7 @@ public class RecipeService : IRecipeService
         {
             _repository.Create( newRecipeEntity );
             await _unitOfWork.SaveChanges();
+            
             return newRecipeEntity.RecipeId;
         }
 
@@ -80,6 +83,7 @@ public class RecipeService : IRecipeService
 
         _repository.Update( domainRecipe.Combine( newRecipeEntity ) );
         await _unitOfWork.SaveChanges();
+        
         return newRecipeEntity.RecipeId;
     }
 
@@ -98,6 +102,7 @@ public class RecipeService : IRecipeService
         }
 
         _repository.Delete( recipeEntity );
+        
         return await _unitOfWork.SaveChanges();
     }
 
@@ -130,6 +135,7 @@ public class RecipeService : IRecipeService
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Like ) );
 
         await _unitOfWork.SaveChanges();
+        
         return recipe;
     }
 
@@ -161,6 +167,7 @@ public class RecipeService : IRecipeService
 
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Favorite ) );
         await _unitOfWork.SaveChanges();
+        
         return recipe;
     }
 
@@ -178,5 +185,12 @@ public class RecipeService : IRecipeService
     public Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end )
     {
         return _repository.GetRecipesBySearchQuery( searchQuery, start, end );
+    }
+    
+    public async Task<List<TagEntity>> GetBestTags( int amount )
+    {
+        var tags = await _tagRepository.GetBestTags( amount );
+
+        return tags;
     }
 }

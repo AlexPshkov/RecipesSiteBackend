@@ -1,5 +1,6 @@
 ﻿using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
+using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Services;
@@ -40,4 +41,6 @@ public interface IRecipeService
     public Task<RecipeEntity> GetBestRecipe( Action action );
 
     public Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end );
+    
+    public Task<List<TagEntity>> GetBestTags( int amount );
 }

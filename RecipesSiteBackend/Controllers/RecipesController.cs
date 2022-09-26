@@ -144,4 +144,15 @@ public class RecipesController : Controller
         
         return Ok( recipes.ConvertAll( x => x.ConvertToRecipeDto( UserId ) ) );
     }
+    
+    [HttpGet]
+    [Route( "best-tags" )]
+    public async Task<IActionResult> BestTags( int amount = 5 )
+    {
+        _logger.LogInformation( "Trying to get best tags. Amount {Amount}", amount );
+        var bestTags = await _recipeService.GetBestTags( amount );
+        
+        _logger.LogInformation( "Success! Best tags got. Amount: {Amount}", amount );
+        return Ok( bestTags.ConvertAll( input => input.ConvertToTagDto() ) );
+    }
 }

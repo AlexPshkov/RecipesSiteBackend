@@ -1,6 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using RecipesSiteBackend.Dto;
-using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 

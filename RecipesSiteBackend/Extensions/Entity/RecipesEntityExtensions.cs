@@ -1,5 +1,4 @@
 ﻿using RecipesSiteBackend.Dto.Recipe;
-using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
@@ -81,7 +80,7 @@ public static class RecipesEntityExtensions
         };
     }
 
-    public static IngredientDto ConvertToIngredientDto( this IngredientEntity ?  ingredientEntity )
+    public static IngredientDto ConvertToIngredientDto( this IngredientEntity?  ingredientEntity )
     {
         if ( ingredientEntity == null )
         {
@@ -95,7 +94,7 @@ public static class RecipesEntityExtensions
         };
     } 
     
-    public static StepDto ConvertToStepDto( this StepEntity ?  stepEntity )
+    public static StepDto ConvertToStepDto( this StepEntity?  stepEntity )
     {
         if ( stepEntity == null )
         {
@@ -108,7 +107,7 @@ public static class RecipesEntityExtensions
         };
     } 
     
-    public static TagDto ConvertToTagDto( this TagEntity ?  tagEntity )
+    public static TagDto ConvertToTagDto( this TagEntity?  tagEntity )
     {
         if ( tagEntity == null )
         {
