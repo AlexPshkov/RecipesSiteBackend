@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>default</LangVersion>
+        <RootNamespace>RecipesSiteBackend</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Migrations" />
         <Folder Include="wwwroot" />
         <Folder Include="wwwroot\images" />
     </ItemGroup>

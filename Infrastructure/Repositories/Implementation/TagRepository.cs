@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
+﻿using RecipesSiteBackend.Storage.Repositories;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 
-namespace RecipesSiteBackend.Storage.Repositories.Implementation;
+namespace Infrastucture.Repositories.Implementation;
 
 public class TagRepository : ITagRepository
 {

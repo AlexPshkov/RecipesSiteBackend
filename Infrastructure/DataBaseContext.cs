@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RecipesSiteBackend.Storage.Entities.EntitiesConfigurations;
+﻿using RecipesSiteBackend.Storage.Entities.EntitiesConfigurations;
 using RecipesSiteBackend.Storage.Entities.EntitiesConfigurations.secondary;
-using RecipesSiteBackend.Storage.Entities.Implementation;
-using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 
-namespace RecipesSiteBackend.Storage.Repositories;
+namespace Infrastucture;
 
 public class DataBaseContext : DbContext
 {
@@ -19,17 +16,17 @@ public class DataBaseContext : DbContext
     public DbSet<IngredientEntity> Ingredients { get; set; }
     
     
-    public DataBaseContext(DbContextOptions<DataBaseContext> options) : base(options)
+    public DataBaseContext( DbContextOptions<DataBaseContext> options ) : base( options )
     {
 
     }
 
     protected override void OnModelCreating( ModelBuilder builder )
     {
-        builder.ApplyConfiguration(new UserEntityMap());
-        builder.ApplyConfiguration(new RecipeEntityMap());
+        builder.ApplyConfiguration( new UserEntityMap() );
+        builder.ApplyConfiguration( new RecipeEntityMap() );
         
-        builder.ApplyConfiguration(new FavoriteEntityMap());
+        builder.ApplyConfiguration( new FavoriteEntityMap());
         builder.ApplyConfiguration(new LikeEntityMap());
         builder.ApplyConfiguration(new StepEntityMap());
         builder.ApplyConfiguration(new IngredientEntityMap());
