@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RecipesSiteBackend.Storage.Entities.Implementation;
 
 namespace RecipesSiteBackend.Exceptions.Implementation;
 
