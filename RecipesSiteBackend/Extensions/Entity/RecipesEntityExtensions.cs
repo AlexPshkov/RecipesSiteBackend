@@ -1,5 +1,4 @@
 ﻿using RecipesSiteBackend.Dto.Recipe;
-using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
@@ -26,7 +25,7 @@ public static class RecipesEntityExtensions
             ImagePath = recipeEntity.ImagePath,
             RequiredTime = recipeEntity.RequiredTime,
             ServingsAmount = recipeEntity.ServingsAmount,
-            UserLogin = recipeEntity.User.Login,
+            UserLogin = recipeEntity.User!.Login,
             FavoritesAmount = recipeEntity.Favorites.Count,
             LikesAmount = recipeEntity.Likes.Count,
             IsCreator = userId != null && recipeEntity.User.UserId == userId,
@@ -68,47 +67,20 @@ public static class RecipesEntityExtensions
         {
             throw new NoSuchRecipeException();
         }
-
+        
         return new RecipeActionEntity
         {
             ActionId = 0,
+            Action = action,
             RecipeId = recipeEntity.RecipeId,
             Recipe = recipeEntity,
             User = recipeEntity.User,
             UserId = recipeEntity.UserId,
-            Action = action
+            ActionDay = DateTimeOffset.Now.DayOfYear,
         };
     }
 
-    public static FavoriteDto ConvertToFavoriteDto( this FavoriteEntity ?  favoriteEntity )
-    {
-        if ( favoriteEntity == null )
-        {
-            return new FavoriteDto();
-        }
-        return new FavoriteDto
-        {
-            Id = favoriteEntity.FavoriteId,
-            UserId = favoriteEntity.User.UserId.ToString(),
-            RecipeId = favoriteEntity.RecipeId
-        };
-    } 
-    
-    public static LikeDto ConvertToLikeDto( this LikeEntity ?  likeEntity )
-    {
-        if ( likeEntity == null )
-        {
-            return new LikeDto();
-        }
-        return new LikeDto
-        {
-            Id = likeEntity.LikeId,
-            UserId = likeEntity.User.UserId.ToString(),
-            RecipeId = likeEntity.RecipeId
-        };
-    }
-    
-    public static IngredientDto ConvertToIngredientDto( this IngredientEntity ?  ingredientEntity )
+    public static IngredientDto ConvertToIngredientDto( this IngredientEntity?  ingredientEntity )
     {
         if ( ingredientEntity == null )
         {
@@ -122,7 +94,7 @@ public static class RecipesEntityExtensions
         };
     } 
     
-    public static StepDto ConvertToStepDto( this StepEntity ?  stepEntity )
+    public static StepDto ConvertToStepDto( this StepEntity?  stepEntity )
     {
         if ( stepEntity == null )
         {
@@ -135,7 +107,7 @@ public static class RecipesEntityExtensions
         };
     } 
     
-    public static TagDto ConvertToTagDto( this TagEntity ?  tagEntity )
+    public static TagDto ConvertToTagDto( this TagEntity?  tagEntity )
     {
         if ( tagEntity == null )
         {

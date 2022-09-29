@@ -4,7 +4,6 @@ using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation.secondary;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
-using RecipesSiteBackend.Validators;
 using Action = RecipesSiteBackend.Storage.Entities.Implementation.Action;
 
 namespace RecipesSiteBackend.Services.Implementation;
@@ -37,6 +36,7 @@ public class RecipeService : IRecipeService
 
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.View ) );
         await _unitOfWork.SaveChanges();
+        
         return recipe;
     }
 
@@ -48,19 +48,20 @@ public class RecipeService : IRecipeService
             var domainTag = await _tagRepository.GetByName( tagEntity.Name );
             list.Add( domainTag ?? tagEntity );
         }
+        
         return list;
     }
 
     public async Task<int> SaveRecipe( RecipeEntity newRecipeEntity )
     {
-        var newValidRecipe = newRecipeEntity.ValidateRecipe();
-        newValidRecipe.Tags = await GetDomainTags( newRecipeEntity.Tags );
+        newRecipeEntity.Tags = await GetDomainTags( newRecipeEntity.Tags );
 
         if ( newRecipeEntity.RecipeId == 0 )
         {
-            _repository.Create( newValidRecipe );
+            _repository.Create( newRecipeEntity );
             await _unitOfWork.SaveChanges();
-            return newValidRecipe.RecipeId;
+            
+            return newRecipeEntity.RecipeId;
         }
 
         var domainRecipe = await _repository.GetById( newRecipeEntity.RecipeId );
@@ -70,19 +71,20 @@ public class RecipeService : IRecipeService
             throw new NoSuchRecipeException( newRecipeEntity.RecipeId );
         }
 
-        if ( newValidRecipe.RecipeId != domainRecipe.RecipeId )
+        if ( newRecipeEntity.RecipeId != domainRecipe.RecipeId )
         {
             throw new NoPermException( "Another RecipeId" );
         }
 
-        if ( newValidRecipe.UserId != domainRecipe.UserId )
+        if ( newRecipeEntity.UserId != domainRecipe.UserId )
         {
             throw new NoPermException( "Another UserId" );
         }
 
-        _repository.Update( domainRecipe.Combine( newValidRecipe ) );
+        _repository.Update( domainRecipe.Combine( newRecipeEntity ) );
         await _unitOfWork.SaveChanges();
-        return newValidRecipe.RecipeId;
+        
+        return newRecipeEntity.RecipeId;
     }
 
     public async Task<bool> RemoveRecipe( int recipeId, Guid userId )
@@ -100,6 +102,7 @@ public class RecipeService : IRecipeService
         }
 
         _repository.Delete( recipeEntity );
+        
         return await _unitOfWork.SaveChanges();
     }
 
@@ -132,6 +135,7 @@ public class RecipeService : IRecipeService
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Like ) );
 
         await _unitOfWork.SaveChanges();
+        
         return recipe;
     }
 
@@ -163,6 +167,7 @@ public class RecipeService : IRecipeService
 
         recipe.Actions.Add( recipe.ConvertToRecipeActionEntity( Action.Favorite ) );
         await _unitOfWork.SaveChanges();
+        
         return recipe;
     }
 
@@ -177,8 +182,15 @@ public class RecipeService : IRecipeService
         return recipe;
     }
 
-    public Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end )
+    public Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end )
     {
-        return _repository.MakeSearch( searchQuery, start, end );
+        return _repository.GetRecipesBySearchQuery( searchQuery, start, end );
+    }
+    
+    public async Task<List<TagEntity>> GetBestTags( int amount )
+    {
+        var tags = await _tagRepository.GetBestTags( amount );
+
+        return tags;
     }
 }

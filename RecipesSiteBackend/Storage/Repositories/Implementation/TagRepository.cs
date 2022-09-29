@@ -13,11 +13,6 @@ public class TagRepository : ITagRepository
     {
         _dbContext = dbContext;
     }
-    
-    public List<TagEntity> GetAll()
-    {
-        return _dbContext.Tags.ToList();
-    }
 
     public Task<TagEntity?> GetById( int id )
     {
@@ -42,5 +37,15 @@ public class TagRepository : ITagRepository
     public void Delete( TagEntity entity )
     {
         _dbContext.Tags.Remove( entity );
+    }
+    
+    public async Task<List<TagEntity>> GetBestTags( int amount )
+    {
+        var actions = _dbContext.Tags
+            .Include( x => x.Recipes )
+            .OrderByDescending( x => x.Recipes.Count )
+            .Take( amount );
+        
+        return await actions.ToListAsync();
     }
 }

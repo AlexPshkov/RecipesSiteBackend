@@ -2,8 +2,8 @@
 
 public class UserDto
 {
-    public string UserName { get; set; }
-    public string Login { get; set; }
-    public string Description { get; set; }
-    public string Role { get; set; }
+    public string UserName { get; init; }
+    public string Login { get; init; }
+    public string Description { get; init; }
+    public string Role { get; init; }
 }

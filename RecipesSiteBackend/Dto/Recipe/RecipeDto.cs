@@ -2,21 +2,22 @@
 
 public class RecipeDto
 {
-    public int Id { get; set; }
-    public string RecipeName { get; set; }
-    public string RecipeDescription { get; set; }
+    public int Id { get; init; }
+    public string RecipeName { get; init; }
+    public string RecipeDescription { get; init; }
 
-    public string ImagePath { get; set; }
-    public string RequiredTime { get; set; }
-    public string ServingsAmount { get; set; }
+    public string ImagePath { get; init; }
+    public string RequiredTime { get; init; }
+    public string ServingsAmount { get; init; }
     
-    public string UserLogin { get; set; } = "";
-    public int FavoritesAmount { get; set; }
-    public int LikesAmount { get; set; }
-    public bool IsCreator { get; set; }
-    public bool IsLiked { get; set; }
-    public bool IsFavorite { get; set; }
-    public List<TagDto> Tags { get; set; }
-    public List<IngredientDto> Ingredients { get; set; }
-    public List<StepDto> Steps { get; set; }
+    public string UserLogin { get; init; } = "";
+    public int FavoritesAmount { get; init; }
+    public int LikesAmount { get; init; }
+    public bool IsCreator { get; init; }
+    public bool IsLiked { get; init; }
+    public bool IsFavorite { get; init; }
+    
+    public List<TagDto> Tags { get; init; }
+    public List<IngredientDto> Ingredients { get; init; }
+    public List<StepDto> Steps { get; init; }
 }

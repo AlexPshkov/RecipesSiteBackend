@@ -1,6 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using RecipesSiteBackend.Dto;
-using RecipesSiteBackend.Exceptions;
 using RecipesSiteBackend.Exceptions.Implementation;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 
@@ -23,30 +22,6 @@ public static class UserEntityExtensions
             Description = userEntity.Description,
             Login = userEntity.Login,
             Role = userEntity.Role.ToString()
-        };
-    } 
-    
-    /**
-     * <exception cref="NoSuchUserException"></exception>
-     */
-    public static UserStatisticDto ConvertToUserStatisticDto( this UserEntity?  userEntity )
-    {
-        if ( userEntity == null )
-        {
-            throw new NoSuchUserException();
-        }
-
-        var createdRecipes = userEntity.CreatedRecipes;
-        var totalLikes = 0;
-        var totalFavorites = 0;
-        createdRecipes.ForEach( x => totalLikes += x.Likes.Count );
-        createdRecipes.ForEach( x => totalFavorites += x.Favorites.Count );
-        
-        return new UserStatisticDto()
-        {
-            CreatedRecipesAmount = createdRecipes.Count,
-            LikedRecipesAmount = totalLikes,
-            FavoritesRecipesAmount = totalFavorites
         };
     } 
     

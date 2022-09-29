@@ -1,1 +1,3 @@
-﻿/RecipesSiteBackend/Migrations/DataBaseContextModelSnapshot.cs
+﻿/RecipesSiteBackend/bin/*/
+/RecipesSiteBackend/bin/*
+/RecipesSiteBackend/obj/*/

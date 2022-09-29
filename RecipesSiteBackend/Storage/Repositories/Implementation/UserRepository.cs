@@ -24,18 +24,6 @@ public class UserRepository : IUserRepository
     {
         return _dbContext.UserAccounts.SingleOrDefaultAsync( user => login == user.Login );
     }
-
-    /**
-     * <remarks>Returns big entity with all children entities</remarks>
-     */
-    public Task<UserEntity?> GetFullById( Guid id )
-    {
-        return _dbContext.UserAccounts
-            .Include( x => x.CreatedRecipes )
-            .Include( x => x.Likes )
-            .Include( x => x.Favorites )
-            .SingleOrDefaultAsync( user => id.Equals( user.UserId ) );
-    }
     
     public async Task<List<RecipeEntity>> GetCreatedRecipes( Guid userId , int start, int end )
     {
@@ -73,6 +61,33 @@ public class UserRepository : IUserRepository
             .ToList();
         
         return favorites.ConvertAll( input => input.Recipe );
+    }
+
+    public async Task<UserStatisticEntity> GetUserStatistic( Guid userId )
+    {
+        var user = await _dbContext.UserAccounts
+            .Include( x => x.CreatedRecipes )
+            .SingleOrDefaultAsync(user => userId.Equals( user.UserId ));
+        if ( user == null )
+        {
+            throw new NoSuchUserException();
+        }
+        
+        var recipes = user.CreatedRecipes
+            .OrderByDescending( x => x.RecipeId )
+            .ToList();
+
+        var totalLikes = 0;
+        var totalFavorites = 0;
+        recipes.ForEach( x => totalLikes += x.Likes.Count );
+        recipes.ForEach( x => totalFavorites += x.Favorites.Count );
+
+        return new UserStatisticEntity
+        {
+            CreatedRecipesAmount = recipes.Count,
+            CreatedRecipesLikesAmount = totalLikes,
+            CreatedRecipesFavoritesAmount = totalFavorites
+        };
     }
     
     public async void Create( UserEntity entity )

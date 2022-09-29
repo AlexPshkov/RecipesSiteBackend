@@ -3,7 +3,6 @@ using RecipesSiteBackend.Extensions.Entity;
 using RecipesSiteBackend.Storage.Entities.Implementation;
 using RecipesSiteBackend.Storage.Repositories.Interfaces;
 using RecipesSiteBackend.Storage.UoW;
-using RecipesSiteBackend.Validators;
 
 namespace RecipesSiteBackend.Services.Implementation;
 
@@ -22,12 +21,7 @@ public class UserService : IUserService
     {
         return _userRepository.GetById( id );
     }
-    
-    public Task<UserEntity?> GetFullUserById( Guid id )
-    {
-        return _userRepository.GetFullById( id );
-    }
-    
+
     public Task<UserEntity?> GetUserByLogin( string login )
     {
         return _userRepository.GetByLogin( login );
@@ -43,32 +37,36 @@ public class UserService : IUserService
         return _userRepository.GetCreatedRecipes( userId, start, end );
     }
     
+    public async Task<UserStatisticEntity> GetUserStatistic( Guid userId )
+    {
+        return await _userRepository.GetUserStatistic( userId );
+    }
+    
     public async Task<UserEntity> Save( UserEntity userEntity )
     {
-        var newValidUser = userEntity.ValidateUser();
         var domainUser = await _userRepository.GetById( userEntity.UserId );
         
         if ( domainUser == null)
         { 
-            _userRepository.Create( newValidUser );
+            _userRepository.Create( userEntity );
             await _unitOfWork.SaveChanges();
             return userEntity;
         }
 
-        if ( domainUser.UserId != newValidUser.UserId )
+        if ( domainUser.UserId != userEntity.UserId )
         {
             throw new NoPermException( "Another UserId" );
         }
 
-        if ( domainUser.Login != newValidUser.Login )
+        if ( domainUser.Login != userEntity.Login )
         {
-            if ( await _userRepository.GetByLogin( newValidUser.Login ) != null )
+            if ( await _userRepository.GetByLogin( userEntity.Login ) != null )
             {
-                throw new UserAlreadyExistsException( newValidUser.Login );
+                throw new UserAlreadyExistsException( userEntity.Login );
             }
         }
         
-        _userRepository.Update( domainUser.Combine( newValidUser ) );
+        _userRepository.Update( domainUser.Combine( userEntity ) );
         await _unitOfWork.SaveChanges();
         return domainUser;
     }

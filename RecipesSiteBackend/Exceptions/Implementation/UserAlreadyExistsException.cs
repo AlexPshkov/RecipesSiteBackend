@@ -4,12 +4,8 @@ namespace RecipesSiteBackend.Exceptions.Implementation;
 
 public class UserAlreadyExistsException : AbstractRuntimeException
 {
-    public UserAlreadyExistsException()
-    {
-    }
-    
     public UserAlreadyExistsException( string login ) 
-        : base($"User with login = {login} already exists")
+        : base( $"User with login = {login} already exists" )
     {
     }
     
@@ -18,5 +14,5 @@ public class UserAlreadyExistsException : AbstractRuntimeException
         return base.GetContentResult( 423 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }

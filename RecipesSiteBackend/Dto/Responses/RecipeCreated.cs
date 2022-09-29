@@ -2,5 +2,5 @@
 
 public class RecipeCreated
 {
-    public int RecipeId { get; set; }
+    public int RecipeId { get; init; }
 }

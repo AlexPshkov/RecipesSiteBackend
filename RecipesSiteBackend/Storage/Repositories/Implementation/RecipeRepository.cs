@@ -8,14 +8,13 @@ namespace RecipesSiteBackend.Storage.Repositories.Implementation;
 
 public class RecipeRepository : IRecipeRepository
 {
-    
     private readonly DataBaseContext _dbContext;
 
-    public RecipeRepository ( DataBaseContext dbContext )
+    public RecipeRepository( DataBaseContext dbContext )
     {
         _dbContext = dbContext;
     }
-    
+
     public Task<List<RecipeEntity>> GetAll( int start, int end )
     {
         return _dbContext.Recipes
@@ -27,9 +26,9 @@ public class RecipeRepository : IRecipeRepository
 
     public Task<RecipeEntity?> GetById( int id )
     {
-        return _dbContext.Recipes.SingleOrDefaultAsync( recipe => id.Equals( recipe.RecipeId ));
+        return _dbContext.Recipes.SingleOrDefaultAsync( recipe => id.Equals( recipe.RecipeId ) );
     }
-    
+
     public async void Create( RecipeEntity entity )
     {
         await _dbContext.Recipes.AddAsync( entity );
@@ -44,35 +43,49 @@ public class RecipeRepository : IRecipeRepository
     {
         _dbContext.Recipes.Remove( entity );
     }
-    
+
     public async Task<RecipeEntity?> GetBestRecipe( Action action )
     {
-        var actions = _dbContext.RecipeActions.Where( recipe => recipe.Action == action );
-        var recipes = actions
-            .Include( x => x.Recipe )
-            .Where( x => x.Action == action )
+        var currentDay = DateTimeOffset.Now.DayOfYear;
+        var actions = _dbContext.RecipeActions
+            .Where( entity => entity.ActionDay == currentDay )
+            .Where( entity => entity.Action == action )
             .GroupBy( x => x.RecipeId )
-            .Select( x => new { id = x.Key, count = x.Count() } )
-            .OrderByDescending( x => x.count );
-       
-        var recipe = await recipes.FirstOrDefaultAsync();
-        if ( recipe == null )
+            .OrderByDescending( x => x.Count() )
+            .Select( x => x.Key );
+
+        var recipeId = await actions.FirstOrDefaultAsync();
+        if ( recipeId == 0 )
         {
             throw new NoBestRecipeException();
         }
-        return await GetById( recipe.id );
+
+        return await GetById( recipeId );
     }
-    
-    public async Task<List<RecipeEntity>> MakeSearch( string searchQuery, int start, int end )
+
+    public async Task<List<RecipeEntity>> GetRecipesBySearchQuery( string searchQuery, int start, int end )
     {
-        var recipes = _dbContext.Recipes
-            .Where( x => searchQuery.Contains( x.RecipeName ) || x.RecipeName.Contains( searchQuery ) )
-            .ToHashSet();
-        var tags = _dbContext.Tags
+        var recipesByName = _dbContext.Recipes
+            .Where( x => x.RecipeName.Contains( searchQuery ) )
+            .Select( x => x.RecipeId );
+
+        var recipesByTag = _dbContext.Tags
+            .Where( x => x.Name.Contains( searchQuery ) )
             .Include( x => x.Recipes )
-            .Where( x => searchQuery.Contains( x.Name ) );
-        await tags.ForEachAsync( tag => recipes.UnionWith( tag.Recipes ) );
+            .SelectMany( x => x.Recipes, ( entity, recipeEntity ) => recipeEntity.RecipeId )
+            .Distinct();
+
+        var totalRecipeIds = await recipesByName
+            .Union( recipesByTag )
+            .OrderByDescending( id => id )
+            .Skip( start - 1 )
+            .Take( end - start + 1 )
+            .ToListAsync();
         
-        return recipes.Skip( start - 1 ).Take( end - start + 1 ).ToList();
-    } 
+        var totalRecipes = await _dbContext.Recipes
+            .Where( x => totalRecipeIds.Contains( x.RecipeId ) )
+            .ToListAsync();
+
+        return totalRecipes;
+    }
 }

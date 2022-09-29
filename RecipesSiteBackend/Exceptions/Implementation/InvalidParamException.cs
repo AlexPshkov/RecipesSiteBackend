@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RecipesSiteBackend.Storage.Entities.Implementation;
 
 namespace RecipesSiteBackend.Exceptions.Implementation;
 
 public class InvalidParamException : AbstractRuntimeException
 {
-    public InvalidParamException()
-    {
-    }
-    
     public InvalidParamException( string message, string paramName = "parameter" ) 
-        : base($"Invalid {paramName}: {message}")
+        : base( $"Invalid {paramName}: {message}" )
     {
     }
     
@@ -19,5 +14,5 @@ public class InvalidParamException : AbstractRuntimeException
         return base.GetContentResult( 412 );
     }
 
-    public override ContentResult? ContentResult => GetContentResult();
+    public override ContentResult ContentResult => GetContentResult();
 }
